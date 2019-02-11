@@ -15,7 +15,7 @@
 	  sso72-postgresql.json
 	do
 	  oc replace -n openshift --force -f \
-	  https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.9/sso/${resource}
+	  https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.16/sso/${resource}
 	done
 
 * Run the following command to install the RH-SSO 7.2 OpenShift image streams in the openshift project:
