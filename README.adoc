@@ -20,8 +20,10 @@
 
 * Run the following command to install the RH-SSO 7.2 OpenShift image streams in the openshift project:
 
-	oc import-image redhat-sso72-openshift:1.0 -n openshift 
-
+        oc import-image redhat-sso72-openshift:1.0 -n openshift
+        oc import-image redhat-sso72-openshift:1.1 -n openshift
+        oc import-image redhat-sso72-openshift:1.2 -n openshift
+        oc import-image redhat-sso72-openshift:1.3 -n openshift
 
 === Nexus
 
