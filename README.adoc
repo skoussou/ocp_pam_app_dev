@@ -3,13 +3,37 @@
 
 == Making Preperations
 
-=== Install ImageStreams
+=== RHSSO
+
+* Installing link:https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_single_sign-on_for_openshift/#using_the_rh_sso_for_openshift_image_streams_and_application_templates[RHSSO 7.2] Templates & Images
+
+	$ for resource in sso72-image-stream.json \
+	  sso72-https.json \
+	  sso72-mysql-persistent.json \
+	  sso72-mysql.json \
+	  sso72-postgresql-persistent.json \
+	  sso72-postgresql.json
+	do
+	  oc replace -n openshift --force -f \
+	  https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.9/sso/${resource}
+	done
+
+* Run the following command to install the RH-SSO 7.2 OpenShift image streams in the openshift project:
+
+	$ oc -n openshift import-image redhat-sso72-openshift:1.0
+
+
+=== Nexus
+
+* *TBD*
+
+=== RHPAM
 
 	cd ./resources/
 	unzip rhpam-7.2.0-openshift-templates.zip
 	oc create -f rhpam72-image-streams.yaml
 
-=== Have images in place
+==== Have images in place
 
 * *Business Central*: A platform for authoring business assets such as data objects, rules, processes, cases, and planning entities.
 
