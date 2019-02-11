@@ -29,11 +29,12 @@
 
 === RHPAM
 
+==== Image Stream
 	cd ./resources/
 	unzip rhpam-7.2.0-openshift-templates.zip
 	oc create -f rhpam72-image-streams.yaml
 
-==== Have images in place
+==== Put RHPAM images in place
 
 * *Business Central*: A platform for authoring business assets such as data objects, rules, processes, cases, and planning entities.
 
@@ -54,3 +55,18 @@
 * *Business Central Monitoring*: A platform for monitoring and management of business assets.
 
 	oc import-image my-rhpam-7/rhpam72-businesscentral-monitoring-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-monitoring-openshift --confirm
+
+==== Insert Templates
+
+   	cd ./resources/templates
+	oc create -f <template-name> -n openshift
+
+==== Custom Tempates
+
+* Template Name:
+** location:
+** purpose:
+
+
+
+
