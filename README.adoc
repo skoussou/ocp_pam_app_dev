@@ -71,4 +71,109 @@
 
 
 
+== CI/CD PoC Setups
+
+=== Tools project
+
+	oc new-project rhpam-tools
+	
+	1. create nexus + rh proxy repos
+	2. SSO
+
+		oc new-app template=sso72-https -p APPLICATION_NAME=gcd -p SSO_ADMIN_USERNAME=ssoadmin -p SSO_ADMIN_PASSWORD=ssoadmin720!
+
+	3. jenkins
+	4. gogs
+	5. quay.io?
+
+
+=== DEV Project
+
+* *Business Central* Installation/Configuration:
+
+	create the clients for Red Hat Process Automation Manager within RH-SSO,
+
+	oc new-app -f rhpam72-authoring \
+			-p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
+			-p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
+			-p APPLICATION_NAME=gcd \
+			-p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
+			-p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
+			-p KIE_SERVER_HTTPS_NAME=kieserver \
+			-p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
+			-p KIE_ADMIN_USER=rhpamadmin \
+			-P KIE_ADMIN_PWD=rhpamadmin720! \
+			-p KIE_SERVER_USER=executionUser \
+			-p KIE_SERVER_PWD=executionUser123! \
+			-p KIE_SERVER_CONTROLLER_USER=controllerUser \
+			-p KIE_SERVER_CONTROLLER_PWD=controllerUser123! \
+			-p MAVEN_REPO_URL=http://nexus-nexus.bpmapps.grupocgd.com/repository/maven-public \
+			-p MAVEN_REPO_USERNAME=nexus \
+			-p MAVEN_REPO_PASSWORD=nexus123 \
+			-p MAVEN_REPO_ID=maven-public \
+			-p SSO_URL=https://gcd-sso-nexus.bpmapps.grupocgd.com \
+			-p SSO_REALM=Master \
+			-p BUSINESS_CENTRAL_SSO_CLIENT=gcd-rhpamcentral \
+			-p KIE_SERVER_SSO_CLIENT=gcd-kieserver \
+			-p SSO_USERNAME=ssoadmin \
+			-p SSO_PASSWORD=ssoadmin720! \									
+			-p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true \
+
+
+
+	oc new-app -f rhpam72-authoring \
+			-p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
+			-p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
+			-p APPLICATION_NAME=gcd \
+			-p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
+			-p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
+			-p KIE_SERVER_HTTPS_NAME=kieserver \
+			-p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
+			-p KIE_ADMIN_USER=rhpamadmin \
+			-P KIE_ADMIN_PWD=rhpamadmin720! \
+			-p KIE_SERVER_USER=executionUser \
+			-p KIE_SERVER_PWD=executionUser123! \
+			-p KIE_SERVER_CONTROLLER_USER=controllerUser \
+			-p KIE_SERVER_CONTROLLER_PWD=controllerUser123! \
+			-p  \
+			-p  \
+			-p  \
+			-p  \
+			-p  \
+			-p  \
+			-p MAVEN_REPO_URL=http://nexus-nexus.bpmapps.grupocgd.com/repository/maven-public \
+			-p MAVEN_REPO_USERNAME=nexus \
+			-p MAVEN_REPO_PASSWORD=nexus123 \
+			-p MAVEN_REPO_ID=maven-public \
+			-p  \
+			-p SSO_URL=https://gcd-sso-nexus.bpmapps.grupocgd.com \
+			-p SSO_REALM=Master \
+			-p BUSINESS_CENTRAL_SSO_CLIENT=gcd-rhpamcentral \
+		[REMOVE -p BUSINESS_CENTRAL_SSO_SECRET= \
+		[REMOVE]-p BUSINESS_CENTRAL_HOSTNAME_HTTP=http://gcd-rhpamcentr-gcd-dev.bpmapps.grupocgd.com/ \
+		[REMOVE]-p BUSINESS_CENTRAL_HOSTNAME_HTTPS=https://secure-gcd-rhpamcentr-gcd-dev.bpmapps.grupocgd.com/
+			-p KIE_SERVER_SSO_CLIENT=gcd-kieserver \
+		[REMOVE -p KIE_SERVER_SSO_SECRET= \		
+		[REMOVE]-p KIE_SERVER_HOSTNAME_HTTP= \
+		[REMOVE]-p KIE_SERVER_HOSTNAME_HTTPS= \									
+			-p SSO_USERNAME=ssoadmin \
+			-p SSO_PASSWORD=ssoadmin720! \									
+			-p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true \
+			-p  \									
+			-p  \
+			-p  \									
+								
+
+							
+
+
+=== PROD Project
+	
+
+
+
+
+
+
+
 
