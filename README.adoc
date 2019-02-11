@@ -7,7 +7,7 @@
 
 * Installing link:https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_single_sign-on_for_openshift/#using_the_rh_sso_for_openshift_image_streams_and_application_templates[RHSSO 7.2] Templates & Images
 
-	$ for resource in sso72-image-stream.json \
+	for resource in sso72-image-stream.json \
 	  sso72-https.json \
 	  sso72-mysql-persistent.json \
 	  sso72-mysql.json \
@@ -20,7 +20,7 @@
 
 * Run the following command to install the RH-SSO 7.2 OpenShift image streams in the openshift project:
 
-	$ oc -n openshift import-image redhat-sso72-openshift:1.0
+	oc import-image redhat-sso72-openshift:1.0 -n openshift 
 
 
 === Nexus
