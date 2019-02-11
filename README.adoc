@@ -1,1 +1,28 @@
 = OCP APP DEV WITH RH PAM
+
+
+== Making Preperations
+
+=== Install ImageStreams
+
+=== Have images in place
+
+* *Business Central*: A platform for authoring business assets such as data objects, rules, processes, cases, and planning entities.
+
+	oc import-image my-rhpam-7/rhpam72-businesscentral-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-openshift --confirm
+
+* *KIE Server* REST services runtime environment for business assets such as business processes, rules, cases, and planning entities.
+
+	oc import-image my-rhpam-7/rhpam72-kieserver-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-kieserver-openshift --confirm
+
+* *KIE (Standalone) Controller*:  A component for managing multiple KIE Servers (Process, Decision, Planning) in manage mode.
+
+	oc import-image my-rhpam-7/rhpam72-controller-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-controller-openshift --confirm
+
+* *Smart Router*: Load balancing, unified view on available business assets, and aggregation of responses throughout multiple KIE Servers (Process, Decision, Planning).
+
+	oc import-image my-rhpam-7/rhpam72-smartrouter-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-smartrouter-openshift --confirm
+
+* *Business Central Monitoring*: A platform for monitoring and management of business assets.
+
+	oc import-image my-rhpam-7/rhpam72-businesscentral-monitoring-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-monitoring-openshift --confirm
