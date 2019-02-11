@@ -99,8 +99,10 @@ oc new-app --template=openshift/rhpam72-authoring \
                         -p APPLICATION_NAME=gcd \
                         -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
                         -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
+                        -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks \
                         -p KIE_SERVER_HTTPS_NAME=kieserver \
                         -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
+			-p KIE_SERVER_HTTPS_KEYSTORE==kiekeystore.jks
                         -p KIE_ADMIN_USER=rhpamadmin \
                         -p KIE_ADMIN_PWD=rhpamadmin720! \
                         -p KIE_SERVER_USER=executionUser \
@@ -194,6 +196,40 @@ oc new-app --template=openshift/rhpam72-authoring \
 
 
 === PROD Project
+re-service" => "management"),
+    ("security-realm" => "ApplicationRealm")
+]) - failure description: {"WFLYCTL0080: Failed services" => {"org.wildfly.core.management.security.realm.ApplicationRealm.key-manager" => "Failed to start service
+    Caused by: java.lang.IllegalStateException: org.jboss.msc.service.StartException in anonymous service: WFLYDM0086: The KeyStore can not be found at /etc/kieserver-secret-volume/keystore.jks
+    Caused by: org.jboss.msc.service.StartException in anonymous service: WFLYDM0086: The KeyStore can not be found at /etc/kieserver-secret-volume/keystore.jks"}}
+19:37:38,461 INFO  [org.jboss.as.server] (ServerService Thread Pool -- 44) WFLYSRV0010: Deployed "ROOT.war" (runtime-name : "ROOT.war")
+19:37:38,468 INFO  [org.jboss.as.controller] (Controller Boot Thread) WFLYCTL0183: Service status report
+WFLYCTL0186:   Services which failed to start:      service org.wildfly.core.management.security.realm.ApplicationRealm.key-manager: Failed to start service
+WFLYCTL0448: 4 additional services are down due to their dependencies being missing or failed
+19:37:38,668 INFO  [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0212: Resuming server
+19:37:38,674 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
+19:37:38,674 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0054: Admin console is not enabled
+19:37:38,674 ERROR [org.jboss.as] (Controller Boot Thread) WFLYSRV0026: JBoss EAP 7.2.0.GA (WildFly Core 6.0.11.Final-redhat-00001) started (with errors) in 31129ms - Started 365 of 722 services (7 services failed or missing dependencies, 477 services are lazy, passive or on-demand)
+
+
+
+
+T.war/WEB-INF/lib/jaxb-core-2.3.0.jar  does not point to a valid jar for a Class-Path reference.
+19:39:04,724 WARN  [org.jboss.as.server.deployment] (MSC service thread 1-1) WFLYSRV0059: Class Path entry jaxb-core.jar in /opt/eap/standalone/deployments/ROOT.war/WEB-INF/lib/jaxb-impl-2.3.0.jar  does not point to a valid jar for a Class-Path reference.
+19:39:05,175 ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation ("add") failed - address: ([
+    ("core-service" => "management"),
+    ("security-realm" => "ApplicationRealm")
+]) - failure description: {"WFLYCTL0080: Failed services" => {"org.wildfly.core.management.security.realm.ApplicationRealm.key-manager" => "Failed to start service
+    Caused by: java.lang.IllegalStateException: org.jboss.msc.service.StartException in anonymous service: WFLYDM0086: The KeyStore can not be found at /etc/businesscentral-secret-volume/keystore.jks
+    Caused by: org.jboss.msc.service.StartException in anonymous service: WFLYDM0086: The KeyStore can not be found at /etc/businesscentral-secret-volume/keystore.jks"}}
+19:39:05,187 INFO  [org.jboss.as.server] (ServerService Thread Pool -- 44) WFLYSRV0010: Deployed "ROOT.war" (runtime-name : "ROOT.war")
+19:39:05,199 INFO  [org.jboss.as.controller] (Controller Boot Thread) WFLYCTL0183: Service status report
+WFLYCTL0186:   Services which failed to start:      service org.wildfly.core.management.security.realm.ApplicationRealm.key-manager: Failed to start service
+WFLYCTL0448: 4 additional services are down due to their dependencies being missing or failed
+19:39:05,343 INFO  [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0212: Resuming server
+19:39:05,350 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
+19:39:05,351 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0054: Admin console is not enabled
+19:39:05,351 ERROR [org.jboss.as] (Controller Boot Thread) WFLYSRV0026: JBoss EAP 7.2.0.GA (WildFly Core 6.0.11.Final-redhat-00001) started (with errors) in 47714ms - Started 348 of 705 services (7 services failed or missing dependencies, 475 services are lazy, passive or on-demand)
+
 	
 
 
