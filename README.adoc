@@ -117,7 +117,7 @@
 			-p KIE_SERVER_SSO_CLIENT=gcd-kieserver \
 			-p SSO_USERNAME=ssoadmin \
 			-p SSO_PASSWORD=ssoadmin720! \									
-			-p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true \
+			-p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true \ -l app=bc
 
 
 
