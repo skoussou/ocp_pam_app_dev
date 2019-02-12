@@ -594,7 +594,7 @@ objects:
             mountPath: "/opt/eap/standalone/data/kie"
           - name: settings-volume
             mountPath: "/home/jboss/.m2/settings.xml"
-              subPath: settings.xml
+            subPath: settings.xml
           image: "${KIE_SERVER_IMAGE_STREAM_NAME}"
           imagePullPolicy: Always
           livenessProbe:
