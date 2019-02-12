@@ -7,10 +7,8 @@ metadata:
     app: nexus
     template: nexus3-persistent-template
   name: nexus
-  namespace: nexus
+  namespace: tools
   resourceVersion: "4722960"
-  selfLink: /apis/apps.openshift.io/v1/namespaces/nexus/deploymentconfigs/nexus
-  uid: 83e0df28-18de-11e9-8365-0050569fef90
 spec:
   replicas: 1
   revisionHistoryLimit: 10
