@@ -93,6 +93,60 @@
 
 	create the clients for Red Hat Process Automation Manager within RH-SSO,
 
+(WITH SSO)
+
+	oc new-app --template=openshift/rhpam72-authoring \
+                        -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
+                        -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
+                        -p APPLICATION_NAME=gcd \
+                        -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
+                        -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
+                        -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks \
+                        -p KIE_SERVER_HTTPS_NAME=kieserver \
+                        -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
+                        -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks \
+                        -p KIE_ADMIN_USER=rhpamadmin \
+                        -p KIE_ADMIN_PWD=rhpamadmin720 \
+                        -p KIE_SERVER_USER=executionUser \
+                        -p KIE_SERVER_PWD=executionUser123 \
+                        -p KIE_SERVER_CONTROLLER_USER=controllerUser \
+                        -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 \
+                        -p MAVEN_REPO_URL=http://nexus-nexus.bpmapps.grupocgd.com/repository/maven-public \
+                        -p MAVEN_REPO_USERNAME=admin \
+                        -p MAVEN_REPO_PASSWORD=admin123 \
+                        -p MAVEN_REPO_ID=maven-public \
+                        -p SSO_URL=https://gcd-sso-nexus.bpmapps.grupocgd.com/auth \
+                        -p SSO_REALM=master \
+                        -p BUSINESS_CENTRAL_SSO_CLIENT=gcd-rhpamcentral \
+                        -p BUSINESS_CENTRAL_SSO_SECRET=8a850fe1-562e-47bf-a2fc-42ccd4d24047 \
+                        -p KIE_SERVER_SSO_CLIENT=gcd-kieserver \
+                        -p SSO_USERNAME=ssoadmin \
+                        -p SSO_PASSWORD=ssoadmin720! \
+                        -p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true -l app=bc
+
+(NO SSO)
+	oc new-app --template=openshift/rhpam72-authoring \
+                        -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
+                        -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
+                        -p APPLICATION_NAME=gcd \
+                        -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
+                        -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
+                        -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks \
+                        -p KIE_SERVER_HTTPS_NAME=kieserver \
+                        -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
+                        -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks \
+                        -p KIE_ADMIN_USER=rhpamadmin \
+                        -p KIE_ADMIN_PWD=rhpamadmin720 \
+                        -p KIE_SERVER_USER=executionUser \
+                        -p KIE_SERVER_PWD=executionUser123 \
+                        -p KIE_SERVER_CONTROLLER_USER=controllerUser \
+                        -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 \
+                        -p MAVEN_REPO_URL=http://nexus-nexus.bpmapps.grupocgd.com/repository/maven-public \
+                        -p MAVEN_REPO_USERNAME=admin \
+                        -p MAVEN_REPO_PASSWORD=admin123 \
+                        -p MAVEN_REPO_ID=maven-public  -l app=bc
+
+
 oc new-app --template=openshift/rhpam72-authoring \
                         -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
                         -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
@@ -113,10 +167,12 @@ oc new-app --template=openshift/rhpam72-authoring \
                         -p MAVEN_REPO_USERNAME=nexus \
                         -p MAVEN_REPO_PASSWORD=nexus123 \
                         -p MAVEN_REPO_ID=maven-public \
-                        -p SSO_URL=https://gcd-sso-nexus.bpmapps.grupocgd.com \
-                        -p SSO_REALM=Master \
+                        -p SSO_URL=https://gcd-sso-nexus.bpmapps.grupocgd.com/auth \
+                        -p SSO_REALM=master \
                         -p BUSINESS_CENTRAL_SSO_CLIENT=gcd-rhpamcentral \
+                        -p BUSINESS_CENTRAL_SSO_SECRET=S4nq1SVUiVxhQpgZuP8gDlqKmnraOEcl-ngMC8mA2aM
                         -p KIE_SERVER_SSO_CLIENT=gcd-kieserver \
+                        -p KIE_SERVER_SSO_SECRET=S4nq1SVUiVxhQpgZuP8gDlqKmnraOEcl-ngMC8mA2aM
                         -p SSO_USERNAME=ssoadmin \
                         -p SSO_PASSWORD=ssoadmin720! \
                         -p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true -l app=bc
@@ -140,9 +196,11 @@ oc new-app --template=openshift/rhpam72-authoring \
 			-p MAVEN_REPO_PASSWORD=nexus123 \
 			-p MAVEN_REPO_ID=maven-public \
 			-p SSO_URL=https://gcd-sso-nexus.bpmapps.grupocgd.com \
-			-p SSO_REALM=Master \
+			-p SSO_REALM=master \
 			-p BUSINESS_CENTRAL_SSO_CLIENT=gcd-rhpamcentral \
+                        -p BUSINESS_CENTRAL_SSO_SECRET=S4nq1SVUiVxhQpgZuP8gDlqKmnraOEcl-ngMC8mA2aM
 			-p KIE_SERVER_SSO_CLIENT=gcd-kieserver \
+			-p KIE_SERVER_SSO_SECRET=S4nq1SVUiVxhQpgZuP8gDlqKmnraOEcl-ngMC8mA2aM
 			-p SSO_USERNAME=ssoadmin \
 			-p SSO_PASSWORD=ssoadmin720! \									
 			-p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true \ -l app=bc
@@ -204,129 +262,9 @@ oc new-app --template=openshift/rhpam72-authoring \
 
 ==== BC
 
-19:51:57,718 INFO  [org.uberfire.ext.metadata.io.IOServiceIndexedImpl] (Thread-131) Completed indexing 1 events in cluster [KClusterImpl [clusterId=system/datasets/master]].
-19:51:57,796 INFO  [org.kie.workbench.screens.workbench.backend.SwaggerAPIScanner] (ServerService Thread Pool -- 90) Starting Swagger API discovery
-19:51:58,017 INFO  [org.guvnor.common.services.builder.ResourceChangeIncrementalBuilder] (Thread-128) Incremental build request received for: default://master@system/datasets/definitions/jbpmProcessInstancesWithVariables.dset (added).
-19:51:58,322 INFO  [org.uberfire.backend.server.WebAppListener] (ServerService Thread Pool -- 90) Root directory = /deployments/ROOT.war
-19:51:58,350 INFO  [org.guvnor.common.services.builder.ResourceChangeIncrementalBuilder] (Thread-128) Incremental build request received for: default://master@system/datasets/definitions/processesMonitoring.dset (added).
-19:51:58,409 INFO  [org.uberfire.backend.server.security.RoleLoader] (ServerService Thread Pool -- 90) Roles registered from web.xml "process-admin,manager,admin,analyst,developer,user"
-19:51:58,665 INFO  [org.guvnor.common.services.builder.ResourceChangeIncrementalBuilder] (Thread-128) Incremental build request received for: default://master@system/datasets/definitions/tasksMonitoring.dset (added).
-19:51:58,924 INFO  [org.guvnor.common.services.builder.ResourceChangeIncrementalBuilder] (Thread-128) Incremental build request received for: default://master@system/datasets/definitions/jbpmRequestList.dset (added).
-19:51:59,152 INFO  [org.guvnor.common.services.builder.ResourceChangeIncrementalBuilder] (Thread-128) Incremental build request received for: default://master@system/datasets/definitions/jbpmExecutionErrorList.dset (added).
-19:51:59,391 INFO  [org.guvnor.common.services.builder.ResourceChangeIncrementalBuilder] (Thread-128) Incremental build request received for: default://master@system/datasets/definitions/jbpmHumanTasks.dset (added).
-19:51:59,645 INFO  [org.guvnor.common.services.builder.ResourceChangeIncrementalBuilder] (Thread-128) Incremental build request received for: default://master@system/datasets/definitions/jbpmHumanTasksWithUser.dset (added).
-19:51:59,937 INFO  [org.guvnor.common.services.builder.ResourceChangeIncrementalBuilder] (Thread-128) Incremental build request received for: default://master@system/datasets/definitions/jbpmHumanTasksWithAdmin.dset (added).
-19:52:00,187 INFO  [org.guvnor.common.services.builder.ResourceChangeIncrementalBuilder] (Thread-128) Incremental build request received for: default://master@system/datasets/definitions/jbpmHumanTasksWithVariables.dset (added).
-19:52:00,372 INFO  [org.guvnor.common.services.builder.ResourceChangeIncrementalBuilder] (Thread-128) Incremental build request received for: default://master@system/datasets/definitions/jbpmProcessInstanceLogs.dset (added).
-19:52:00,567 INFO  [org.guvnor.common.services.builder.ResourceChangeIncrementalBuilder] (Thread-128) Incremental build request received for: default://master@system/datasets/definitions/gitContributors.dset (added).
-19:52:00,099 INFO  [org.uberfire.backend.server.authz.AuthorizationPolicyDeployer] (ServerService Thread Pool -- 90) Security policy deployed
-19:52:09,829 INFO  [org.jboss.errai.codegen.util.ClassChangeUtil] (ServerService Thread Pool -- 90) Searching for class: org.jboss.errai.ServerMarshallingFactoryImpl
-19:52:09,830 INFO  [org.jboss.errai.codegen.util.ClassChangeUtil] (ServerService Thread Pool -- 90) Could not find URL for org.jboss.errai.ServerMarshallingFactoryImpl. Attempting to load with context class loader.
-19:52:09,830 INFO  [org.jboss.errai.codegen.util.ClassChangeUtil] (ServerService Thread Pool -- 90) Successfully loaded org.jboss.errai.ServerMarshallingFactoryImpl with context class loader.
-19:52:09,852 WARN  [ErraiMarshalling] (ServerService Thread Pool -- 90) static marshallers were not found.
-19:52:09,853 WARN  [ErraiMarshalling] (ServerService Thread Pool -- 90) using dynamic marshallers. dynamic marshallers are designed for development mode testing, and ideally should not be used in production. *
-19:52:09,978 WARN  [org.jboss.errai.config.rebind.EnvUtil] (ServerService Thread Pool -- 90) The property errai.security.user_on_hostpage_enabled has been set multiple times.
-19:52:10,009 WARN  [org.jboss.errai.config.rebind.EnvUtil] (ServerService Thread Pool -- 90) The property errai.class_scanning_extension has been set multiple times.
-19:52:11,106 WARN  [org.jboss.errai.config.rebind.EnvUtil] (ServerService Thread Pool -- 90) The property errai.security.user_on_hostpage_enabled has been set multiple times.
-19:52:11,113 WARN  [org.jboss.errai.config.rebind.EnvUtil] (ServerService Thread Pool -- 90) The property errai.class_scanning_extension has been set multiple times.
-19:52:15,071 INFO  [org.kie.workbench.common.screens.datasource.management.util.ServiceUtil] (pool-16-thread-1) Getting reference to managed bean: WildflyDataSourceProvider
-19:52:15,110 INFO  [org.kie.workbench.common.screens.datasource.management.util.ServiceUtil] (pool-16-thread-1) Getting reference to managed bean: WildflyDriverProvider
-19:52:16,100 WARN  [org.kie.workbench.common.screens.datasource.management.backend.DataSourceManagementBootstrap] (pool-16-thread-1) Initialize deployments task finished with errors: operation execution failed. :WFLYCTL0379: System boot is in process; execution of remote management operations is not currently available
-19:52:16,101 WARN  [org.kie.workbench.common.screens.datasource.management.backend.DataSourceManagementBootstrap] (pool-16-thread-1) Startup drivers and datasources initialization will be retried again in: 30000 MILLISECONDS(19 attempts left)
-19:52:16,837 INFO  [org.jboss.errai.bus.server.cluster.noop.NoopClusteringProvider] (ServerService Thread Pool -- 90) clustering support not configured.
-19:52:16,857 INFO  [org.jboss.errai.bus.server.service.bootstrap.OrderedBootstrap] (ServerService Thread Pool -- 90) starting errai bus ...
-19:52:16,860 INFO  [org.jboss.errai.bus.server.service.bootstrap.DefaultComponents] (ServerService Thread Pool -- 90) using dispatcher implementation: org.jboss.errai.bus.server.SimpleDispatcher
-19:52:16,869 INFO  [org.jboss.errai.bus.server.service.bootstrap.DefaultComponents] (ServerService Thread Pool -- 90) using session provider implementation: org.jboss.errai.bus.server.HttpSessionProvider
-19:52:16,893 INFO  [org.jboss.errai.bus.server.service.bootstrap.LoadExtensions] (ServerService Thread Pool -- 90) searching for errai extensions ...
-19:52:16,910 INFO  [org.jboss.errai.bus.server.service.bootstrap.OrderedBootstrap] (ServerService Thread Pool -- 90) errai bus started.
-19:52:16,918 INFO  [org.wildfly.extension.undertow] (ServerService Thread Pool -- 90) WFLYUT0021: Registered web context: '/' for server 'default-server'
-19:52:17,013 INFO  [org.jboss.as.server] (ServerService Thread Pool -- 44) WFLYSRV0010: Deployed "ROOT.war" (runtime-name : "ROOT.war")
-19:52:17,216 INFO  [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0212: Resuming server
-19:52:17,226 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
-19:52:17,226 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0054: Admin console is not enabled
-19:52:17,227 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: JBoss EAP 7.2.0.GA (WildFly Core 6.0.11.Final-redhat-00001) started in 146677ms - Started 930 of 1179 services (477 services are lazy, passive or on-demand)
-19:52:17,379 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (pool-22-thread-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:52:17,393 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (default task-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:52:18,201 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) failed to register node to keycloak
-19:52:18,204 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) status from server: 404
-19:52:18,204 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1)    <html><head><title>Error</title></head><body>404 - Not Found</body></html>
-19:52:18,327 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (pool-22-thread-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:52:18,328 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (default task-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:52:18,350 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) failed to register node to keycloak
-19:52:18,351 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) status from server: 404
-19:52:18,351 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1)    <html><head><title>Error</title></head><body>404 - Not Found</body></html>
-19:52:31,347 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (pool-22-thread-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:52:31,347 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (default task-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:52:31,356 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) failed to register node to keycloak
-19:52:31,356 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) status from server: 404
-19:52:31,356 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1)    <html><head><title>Error</title></head><body>404 - Not Found</body></html>
-19:52:39,085 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (pool-22-thread-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:52:39,085 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (default task-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:52:39,094 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) failed to register node to keycloak
-19:52:39,094 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) status from server: 404
-19:52:39,094 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1)    <html><head><title>Error</title></head><body>404 - Not Found</body></html>
-19:52:47,436 INFO  [org.kie.workbench.common.screens.datasource.management.backend.DataSourceManagementBootstrap] (pool-16-thread-1) Initialize deployments task finished successfully.
-19:52:54,099 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (default task-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:52:54,100 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (pool-22-thread-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:52:54,108 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) failed to register node to keycloak
-19:52:54,108 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) status from server: 404
-19:52:54,108 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1)    <html><head><title>Error</title></head><body>404 - Not Found</body></html>
-19:53:01,337 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (pool-22-thread-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:53:01,337 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (default task-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:53:01,354 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) failed to register node to keycloak
-19:53:01,354 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) status from server: 404
-19:53:01,354 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1)    <html><head><title>Error</title></head><body>404 - Not Found</body></html>
-19:53:09,088 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (pool-22-thread-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:53:09,088 WARN  [org.keycloak.adapters.authentication.ClientIdAndSecretCredentialsProvider] (default task-1) Client 'gcd-rhpamcentral' doesn't have secret available
-19:53:09,095 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) failed to register node to keycloak
-19:53:09,095 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1) status from server: 404
-19:53:09,095 ERROR [org.keycloak.adapters.NodesRegistrationManagement] (pool-22-thread-1)    <html><head><title>Error</title></head><body>404 - Not Found</body></html>
-*** JBossAS process (847) received TERM signal ***
-19:53:09,424 INFO  [org.jboss.as.server] (Thread-3) WFLYSRV0236: Suspending server with no timeout.
-19:53:09,430 INFO  [org.jboss.as.ej
-
-
 === KIESERVER
 
 	
-ys kie containers given by controller ignoring locally defined
-19:51:56,461 WARN  [org.kie.server.common.KeyStoreHelperUtil] (ServerService Thread Pool -- 81) Unable to load key store. Using password from configuration
-19:51:59,669 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (ServerService Thread Pool -- 81) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:51:59,670 WARN  [org.kie.server.services.impl.ControllerBasedStartupStrategy] (ServerService Thread Pool -- 81) Unable to connect to any controllers, delaying container installation until connection can be established
-19:51:59,672 INFO  [org.kie.server.services.impl.ControllerBasedStartupStrategy] (ServerService Thread Pool -- 81) Containers were requested to be deployed synchronously, holding application start...
-19:51:59,673 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:52:01,664 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:52:11,667 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:52:14,681 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:52:24,682 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:52:27,692 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:52:37,693 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:52:40,702 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:52:50,703 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:52:53,712 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:53:03,713 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:53:06,722 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:53:16,723 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:53:19,732 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:53:29,733 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:53:32,742 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:53:42,743 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:53:45,752 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:53:55,753 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:53:58,762 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:54:08,763 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:54:11,775 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:54:21,776 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:54:24,788 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:54:34,789 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:54:37,800 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:54:47,801 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:54:50,808 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:55:00,809 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:55:03,820 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:55:13,823 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load key store. Using password from configuration
-19:55:16,832 WARN  [org.kie.server.controller.websocket.client.WebSocketKieServerControllerImpl] (KieServer-ControllerConnect) Exception encountered while syncing with controller at ws://172.30.40.73:8080/websocket/controller/gcd-kieserver error No route to host
-19:55:26,833 WARN  [org.kie.server.common.KeyStoreHelperUtil] (KieServer-ControllerConnect) Unable to load
 
 
 
