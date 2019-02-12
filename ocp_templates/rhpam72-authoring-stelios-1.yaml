@@ -593,7 +593,7 @@ objects:
           - name: "${APPLICATION_NAME}-rhpamcentr-pvol"
             mountPath: "/opt/eap/standalone/data/kie"
           - name: settings-volume
-            mountPath: /home/jboss/.m2/settings.xml
+            mountPath: "/home/jboss/.m2/settings.xml"
               subPath: settings.xml
           image: "${KIE_SERVER_IMAGE_STREAM_NAME}"
           imagePullPolicy: Always
@@ -812,7 +812,7 @@ objects:
             mountPath: "/opt/eap/standalone/data"
 ## H2 volume mount END
           - name: settings-volume
-            mountPath: /home/jboss/.m2/settings.xml
+            mountPath: "/home/jboss/.m2/settings.xml"
             subPath: settings.xml
           livenessProbe:
             exec:
