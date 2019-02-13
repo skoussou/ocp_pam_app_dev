@@ -7,23 +7,30 @@
 
 * Installing link:https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_single_sign-on_for_openshift/#using_the_rh_sso_for_openshift_image_streams_and_application_templates[RHSSO 7.2] Templates & Images
 
-	for resource in sso72-image-stream.json \
-	  sso72-https.json \
-	  sso72-mysql-persistent.json \
-	  sso72-mysql.json \
-	  sso72-postgresql-persistent.json \
-	  sso72-postgresql.json
-	do
-	  oc replace -n openshift --force -f \
-	  https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.16/sso/${resource}
-	done
+	oc login -u system:admin
+	cd ./ocp_pam_app_dev
+	./Infrastructure/scripts/prepare_env_sso.sh
+
+	# DEPRECATED
+	--------------------
+	# oc create -f https://github.com/jboss-container-images/redhat-sso-7-openshift-image/blob/sso72-dev/templates/sso72-image-stream.json -n openshift
+	# for resource in sso72-image-stream.json \
+	#   sso72-https.json \
+	#   sso72-mysql-persistent.json \
+	#   sso72-mysql.json \
+	#   sso72-postgresql-persistent.json \
+	#   sso72-postgresql.json
+	# do
+	#   oc replace -n openshift --force -f \
+	#   https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.16/sso/${resource}
+	# done
+
 
 * Run the following command to install the RH-SSO 7.2 OpenShift image streams in the openshift project:
 
         oc import-image redhat-sso72-openshift:1.0 -n openshift
         oc import-image redhat-sso72-openshift:1.1 -n openshift
         oc import-image redhat-sso72-openshift:1.2 -n openshift
-        oc import-image redhat-sso72-openshift:1.3 -n openshift
 
 === Nexus
 
@@ -32,36 +39,37 @@
 === RHPAM
 
 ==== Image Stream
-	cd ./resources/
-	unzip rhpam-7.2.0-openshift-templates.zip
-	oc create -f rhpam72-image-streams.yaml
+
+	cd ./ocp_pam_app_dev
+	unzip ./resources/rhpam-7.2.0-openshift-templates.zip
+	oc create -f ./resources/rhpam72-image-streams.yaml -n openshift
 
 ==== Put RHPAM images in place
 
 * *Business Central*: A platform for authoring business assets such as data objects, rules, processes, cases, and planning entities.
 
-	oc import-image my-rhpam-7/rhpam72-businesscentral-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-openshift --confirm
+	oc import-image my-rhpam-7/rhpam72-businesscentral-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-openshift --confirm -n openshift
 
 * *KIE Server* REST services runtime environment for business assets such as business processes, rules, cases, and planning entities.
 
-	oc import-image my-rhpam-7/rhpam72-kieserver-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-kieserver-openshift --confirm
+	oc import-image my-rhpam-7/rhpam72-kieserver-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-kieserver-openshift --confirm -n openshift
 
 * *KIE (Standalone) Controller*:  A component for managing multiple KIE Servers (Process, Decision, Planning) in manage mode.
 
-	oc import-image my-rhpam-7/rhpam72-controller-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-controller-openshift --confirm
+	oc import-image my-rhpam-7/rhpam72-controller-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-controller-openshift --confirm -n openshift
 
 * *Smart Router*: Load balancing, unified view on available business assets, and aggregation of responses throughout multiple KIE Servers (Process, Decision, Planning).
 
-	oc import-image my-rhpam-7/rhpam72-smartrouter-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-smartrouter-openshift --confirm
+	oc import-image my-rhpam-7/rhpam72-smartrouter-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-smartrouter-openshift --confirm -n openshift
 
 * *Business Central Monitoring*: A platform for monitoring and management of business assets.
 
-	oc import-image my-rhpam-7/rhpam72-businesscentral-monitoring-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-monitoring-openshift --confirm
+	oc import-image my-rhpam-7/rhpam72-businesscentral-monitoring-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-monitoring-openshift --confirm -n openshift
 
 ==== Insert Templates
 
-   	cd ./resources/templates
-	oc create -f <template-name> -n openshift
+	cd ./ocp_pam_app_dev
+	oc create -f ./resources/<template-name> -n openshift
 
 ==== Custom Tempates
 
@@ -77,19 +85,25 @@
 
 	oc new-project rhpam-tools
 	
-	1. create nexus + rh proxy repos
+1. create nexus + rh proxy repos
 
-		cd ./ocp_pam_app_dev/ocp_templates/nexus
+		cd ./ocp_pam_app_dev
+		oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 		oc project tools
-		oc create -f nexus-dc.yaml -n tools
+		# oc create -f nexus-dc.yaml -n tools
+		./Infrastructure/scripts/setup_nexus.sh <YOURNAMSPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
 
-	2. SSO
+2. SSO Setp
+
+		oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 		oc project tools
-		oc new-app template=openshift/sso72-https -p APPLICATION_NAME=gcd -p SSO_ADMIN_USERNAME=ssoadmin -p SSO_ADMIN_PASSWORD=ssoadmin720! -n tools
+		#oc new-app --template=openshift/sso72-x509-https -p APPLICATION_NAME=cgd-sso -p SSO_ADMIN_USERNAME=ssoadmin -p SSO_ADMIN_PASSWORD=ssoadmin720! -l app=sso -n tools
+		./Infrastructure/scripts/setup_sso.sh tools FALSE
+		
 
-	3. jenkins
-	4. gogs
-	5. quay.io?
+3. jenkins
+4. gogs
+5. quay.io?
 
 
 === DEV Project
@@ -98,8 +112,82 @@
 
 
 
+	oc new-app --template=stelios-1-rhpam72-authoring \
+                        -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
+                        -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
+                        -p APPLICATION_NAME=cgd \
+                        -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
+                        -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
+                        -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks \
+                        -p KIE_SERVER_HTTPS_NAME=kieserver \
+                        -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
+                        -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks \
+                        -p KIE_ADMIN_USER=rhpamadmin \
+                        -p KIE_ADMIN_PWD=rhpamadmin720 \
+                        -p KIE_SERVER_USER=executionUser \
+                        -p KIE_SERVER_PWD=executionUser123 \
+                        -p KIE_SERVER_CONTROLLER_USER=controllerUser \
+                        -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 \
+                        -p MAVEN_REPO_URL=http://nexus3-tools.192.168.42.21.nip.io/maven-public \
+                        -p MAVEN_REPO_USERNAME=admin \
+                        -p MAVEN_REPO_PASSWORD=admin123 \
+                        -p MAVEN_REPO_ID=maven-public  \
+                        -p SSO_URL=https://sso-tools.192.168.42.21.nip.io/auth \
+                        -p SSO_REALM=master \
+                        -p BUSINESS_CENTRAL_SSO_CLIENT=cgd-rhpamcentral \
+                        -p BUSINESS_CENTRAL_SSO_SECRET=05a6816a-9161-49a9-875b-ad3f898a6264 \
+                        -p KIE_SERVER_SSO_CLIENT=cgd-kieserver \
+                        -p SSO_USERNAME=ssoadmin \
+                        -p SSO_PASSWORD=ssoadmin720! \
+                        -p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true -l app=bc -n pam-dev
+			
+
+
+	oc new-app --template=stelios-1-rhpam72-authoring \
+                        -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
+                        -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
+                        -p APPLICATION_NAME=cgd \
+                        -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
+                        -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
+                        -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks \
+                        -p KIE_SERVER_HTTPS_NAME=kieserver \
+                        -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
+                        -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks \
+                        -p KIE_ADMIN_USER=rhpamadmin \
+                        -p KIE_ADMIN_PWD=rhpamadmin720 \
+                        -p KIE_SERVER_USER=executionUser \
+                        -p KIE_SERVER_PWD=executionUser123 \
+                        -p KIE_SERVER_CONTROLLER_USER=controllerUser \
+                        -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 \
+                        -p MAVEN_REPO_URL=http://nexus3-tools.192.168.42.21.nip.io/maven-public \
+                        -p MAVEN_REPO_USERNAME=admin \
+                        -p MAVEN_REPO_PASSWORD=admin123 \
+                        -p MAVEN_REPO_ID=maven-public  -l app=bc -n pam-dev
+			
+
+
+
+
+ <distributionManagement>
+    <repository>
+      <id>nexu</id>
+      <url>http://nexus3-tools.192.168.42.21.nip.io/repository/maven-releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexu</id>
+      <url>http://nexus3-tools.192.168.42.21.nip.io/repository/maven-snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>  
+
+
+
+
+
+
+
 ==== (WITH SSO)
 
+oc project pam-dev
 
 * *Step 1:* Create necessary secrets
 
@@ -139,7 +227,7 @@
                         -p KIE_SERVER_SSO_CLIENT=gcd-kieserver \
                         -p SSO_USERNAME=ssoadmin \
                         -p SSO_PASSWORD=ssoadmin720! \
-                        -p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true -l app=bc
+                        -p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true -l app=bc -n pam-dev
 
 ==== (NO SSO)
 
