@@ -83,7 +83,7 @@
 
 === Tools project
 
-	oc new-project rhpam-tools
+	oc new-project <YOUR-TOOLS-NAEMSPACE>tools
 	
 1. create nexus + rh proxy repos
 
@@ -91,7 +91,7 @@
 		oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 		oc project tools
 		# oc create -f nexus-dc.yaml -n tools
-		./Infrastructure/scripts/setup_nexus.sh <YOURNAMSPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
+		./Infrastructure/scripts/setup_nexus.sh <YOUR-TOOLS-NAEMSPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
 
 2. SSO Setp
 
@@ -100,7 +100,6 @@
 		#oc new-app --template=openshift/sso72-x509-https -p APPLICATION_NAME=cgd-sso -p SSO_ADMIN_USERNAME=ssoadmin -p SSO_ADMIN_PASSWORD=ssoadmin720! -l app=sso -n tools
 		./Infrastructure/scripts/setup_sso.sh tools FALSE
 		
-
 3. jenkins
 4. gogs
 5. quay.io?
@@ -110,308 +109,30 @@
 
 * *Business Central* Installation/Configuration:
 
+	cd ./ocp_pam_app_dev
+	oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
+	oc project pam-dev
+	oc create -f Infrastructure/templates/rhpam72-authoring-stelios-1.yaml
+	./Infrastructure/scripts/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools
 
-
-	oc new-app --template=stelios-1-rhpam72-authoring \
-                        -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
-                        -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
-                        -p APPLICATION_NAME=cgd \
-                        -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
-                        -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
-                        -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks \
-                        -p KIE_SERVER_HTTPS_NAME=kieserver \
-                        -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
-                        -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks \
-                        -p KIE_ADMIN_USER=rhpamadmin \
-                        -p KIE_ADMIN_PWD=rhpamadmin720 \
-                        -p KIE_SERVER_USER=executionUser \
-                        -p KIE_SERVER_PWD=executionUser123 \
-                        -p KIE_SERVER_CONTROLLER_USER=controllerUser \
-                        -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 \
-                        -p MAVEN_REPO_URL=http://nexus3-tools.192.168.42.21.nip.io/maven-public \
-                        -p MAVEN_REPO_USERNAME=admin \
-                        -p MAVEN_REPO_PASSWORD=admin123 \
-                        -p MAVEN_REPO_ID=maven-public  \
-                        -p SSO_URL=https://sso-tools.192.168.42.21.nip.io/auth \
-                        -p SSO_REALM=master \
-                        -p BUSINESS_CENTRAL_SSO_CLIENT=cgd-rhpamcentral \
-                        -p BUSINESS_CENTRAL_SSO_SECRET=05a6816a-9161-49a9-875b-ad3f898a6264 \
-                        -p KIE_SERVER_SSO_CLIENT=cgd-kieserver \
-                        -p SSO_USERNAME=ssoadmin \
-                        -p SSO_PASSWORD=ssoadmin720! \
-                        -p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true -l app=bc -n pam-dev
-			
-
-
-	oc new-app --template=stelios-1-rhpam72-authoring \
-                        -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
-                        -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
-                        -p APPLICATION_NAME=cgd \
-                        -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
-                        -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
-                        -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks \
-                        -p KIE_SERVER_HTTPS_NAME=kieserver \
-                        -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
-                        -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks \
-                        -p KIE_ADMIN_USER=rhpamadmin \
-                        -p KIE_ADMIN_PWD=rhpamadmin720 \
-                        -p KIE_SERVER_USER=executionUser \
-                        -p KIE_SERVER_PWD=executionUser123 \
-                        -p KIE_SERVER_CONTROLLER_USER=controllerUser \
-                        -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 \
-                        -p MAVEN_REPO_URL=http://nexus3-tools.192.168.42.21.nip.io/maven-public \
-                        -p MAVEN_REPO_USERNAME=admin \
-                        -p MAVEN_REPO_PASSWORD=admin123 \
-                        -p MAVEN_REPO_ID=maven-public  -l app=bc -n pam-dev
-			
-
-
-
-
- <distributionManagement>
-    <repository>
-      <id>nexu</id>
-      <url>http://nexus3-tools.192.168.42.21.nip.io/repository/maven-releases</url>
-    </repository>
-    <snapshotRepository>
-      <id>nexu</id>
-      <url>http://nexus3-tools.192.168.42.21.nip.io/repository/maven-snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>  
-
-
-
-
-
-
-
-==== (WITH SSO)
-
-oc project pam-dev
-
-* *Step 1:* Create necessary secrets
-
-	oc create secret generic businesscentral-app-secret --from-file=bckeystore.jks -n YOUR-NAMESPACE
-	oc create secret generic kieserver-app-secret --from-file=kiekeystore.jks -n YOUR-NAMESPACE
-
-* *Step 2:* create the clients for Red Hat Process Automation Manager within RH-SSO,
-** *gcd-kieserver*: confidential (URLs from the rhpamcentral project HTTP/HTTPs) 
-** *gcd-rhpamcentral*: TOKEN Bearer
-** *curl*: so we can test the setup
-
-* *Step 3:* Execute creation via template
-	oc new-app --template=openshift/rhpam72-authoring \
-                        -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
-                        -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
-                        -p APPLICATION_NAME=gcd \
-                        -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
-                        -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
-                        -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks \
-                        -p KIE_SERVER_HTTPS_NAME=kieserver \
-                        -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
-                        -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks \
-                        -p KIE_ADMIN_USER=rhpamadmin \
-                        -p KIE_ADMIN_PWD=rhpamadmin720 \
-                        -p KIE_SERVER_USER=executionUser \
-                        -p KIE_SERVER_PWD=executionUser123 \
-                        -p KIE_SERVER_CONTROLLER_USER=controllerUser \
-                        -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 \
-                        -p MAVEN_REPO_URL=http://nexus-nexus.bpmapps.grupocgd.com/repository/maven-public \
-                        -p MAVEN_REPO_USERNAME=admin \
-                        -p MAVEN_REPO_PASSWORD=admin123 \
-                        -p MAVEN_REPO_ID=maven-public \
-                        -p SSO_URL=https://gcd-sso-nexus.bpmapps.grupocgd.com/auth \
-                        -p SSO_REALM=master \
-                        -p BUSINESS_CENTRAL_SSO_CLIENT=gcd-rhpamcentral \
-                        -p BUSINESS_CENTRAL_SSO_SECRET=8a850fe1-562e-47bf-a2fc-42ccd4d24047 \
-                        -p KIE_SERVER_SSO_CLIENT=gcd-kieserver \
-                        -p SSO_USERNAME=ssoadmin \
-                        -p SSO_PASSWORD=ssoadmin720! \
-                        -p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true -l app=bc -n pam-dev
-
-==== (NO SSO)
-
-* *Step 1:* Create necessary secrets
-
-	oc create secret generic businesscentral-app-secret --from-file=bckeystore.jks -n YOUR-NAMESPACE
-	oc create secret generic kieserver-app-secret --from-file=kiekeystore.jks -n YOUR-NAMESPACE
-
-* *Step 2:* Create configMaps for settings.xml
-
-	cd ./ocp_pam_app_dev/ocp_templates/nexus
-	vi settings.xml
-	CHANGE url to the nexus repository
-	oc create configmap settings.xml --from-file settings.xml
-
-
-* *Step 3:* create BC & KIESERVER
-
-	oc create -f ./ocp_pam_app_dev/ocp_templates/rhpam72-authoring-stelios-1.yaml -n YOUR-NAMESPACE
-	
-
-	oc new-app --template=stelios-1-rhpam72-authoring \
-                        -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
-                        -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
-                        -p APPLICATION_NAME=gcd \
-                        -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
-                        -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
-                        -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks \
-                        -p KIE_SERVER_HTTPS_NAME=kieserver \
-                        -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
-                        -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks \
-                        -p KIE_ADMIN_USER=rhpamadmin \
-                        -p KIE_ADMIN_PWD=rhpamadmin720 \
-                        -p KIE_SERVER_USER=executionUser \
-                        -p KIE_SERVER_PWD=executionUser123 \
-                        -p KIE_SERVER_CONTROLLER_USER=controllerUser \
-                        -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 \
-                        -p MAVEN_REPO_URL=http://nexus-nexus.bpmapps.grupocgd.com/repository/maven-public \
-                        -p MAVEN_REPO_USERNAME=admin \
-                        -p MAVEN_REPO_PASSWORD=admin123 \
-                        -p MAVEN_REPO_ID=maven-public  -l app=bc
-
-
-
-
-
-TO BE DEPRECATED
-	oc new-app --template=openshift/rhpam72-authoring \
-                        -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
-                        -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
-                        -p APPLICATION_NAME=gcd \
-                        -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
-                        -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
-                        -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks \
-                        -p KIE_SERVER_HTTPS_NAME=kieserver \
-                        -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
-                        -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks \
-                        -p KIE_ADMIN_USER=rhpamadmin \
-                        -p KIE_ADMIN_PWD=rhpamadmin720 \
-                        -p KIE_SERVER_USER=executionUser \
-                        -p KIE_SERVER_PWD=executionUser123 \
-                        -p KIE_SERVER_CONTROLLER_USER=controllerUser \
-                        -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 \
-                        -p MAVEN_REPO_URL=http://nexus-nexus.bpmapps.grupocgd.com/repository/maven-public \
-                        -p MAVEN_REPO_USERNAME=admin \
-                        -p MAVEN_REPO_PASSWORD=admin123 \
-                        -p MAVEN_REPO_ID=maven-public  -l app=bc
-
-
-
-
-
-
-
-oc new-app --template=openshift/rhpam72-authoring \
-                        -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
-                        -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
-                        -p APPLICATION_NAME=gcd \
-                        -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
-                        -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
-                        -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks \
-                        -p KIE_SERVER_HTTPS_NAME=kieserver \
-                        -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
-			-p KIE_SERVER_HTTPS_KEYSTORE==kiekeystore.jks
-                        -p KIE_ADMIN_USER=rhpamadmin \
-                        -p KIE_ADMIN_PWD=rhpamadmin720! \
-                        -p KIE_SERVER_USER=executionUser \
-                        -p KIE_SERVER_PWD=executionUser123! \
-                        -p KIE_SERVER_CONTROLLER_USER=controllerUser \
-                        -p KIE_SERVER_CONTROLLER_PWD=controllerUser123! \
-                        -p MAVEN_REPO_URL=http://nexus-nexus.bpmapps.grupocgd.com/repository/maven-public \
-                        -p MAVEN_REPO_USERNAME=nexus \
-                        -p MAVEN_REPO_PASSWORD=nexus123 \
-                        -p MAVEN_REPO_ID=maven-public \
-                        -p SSO_URL=https://gcd-sso-nexus.bpmapps.grupocgd.com/auth \
-                        -p SSO_REALM=master \
-                        -p BUSINESS_CENTRAL_SSO_CLIENT=gcd-rhpamcentral \
-                        -p BUSINESS_CENTRAL_SSO_SECRET=S4nq1SVUiVxhQpgZuP8gDlqKmnraOEcl-ngMC8mA2aM
-                        -p KIE_SERVER_SSO_CLIENT=gcd-kieserver \
-                        -p KIE_SERVER_SSO_SECRET=S4nq1SVUiVxhQpgZuP8gDlqKmnraOEcl-ngMC8mA2aM
-                        -p SSO_USERNAME=ssoadmin \
-                        -p SSO_PASSWORD=ssoadmin720! \
-                        -p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true -l app=bc
-
-	oc new-app -f rhpam72-authoring \
-			-p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
-			-p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
-			-p APPLICATION_NAME=gcd \
-			-p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
-			-p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
-			-p KIE_SERVER_HTTPS_NAME=kieserver \
-			-p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
-			-p KIE_ADMIN_USER=rhpamadmin \
-			-P KIE_ADMIN_PWD=rhpamadmin720! \
-			-p KIE_SERVER_USER=executionUser \
-			-p KIE_SERVER_PWD=executionUser123! \
-			-p KIE_SERVER_CONTROLLER_USER=controllerUser \
-			-p KIE_SERVER_CONTROLLER_PWD=controllerUser123! \
-			-p MAVEN_REPO_URL=http://nexus-nexus.bpmapps.grupocgd.com/repository/maven-public \
-			-p MAVEN_REPO_USERNAME=nexus \
-			-p MAVEN_REPO_PASSWORD=nexus123 \
-			-p MAVEN_REPO_ID=maven-public \
-			-p SSO_URL=https://gcd-sso-nexus.bpmapps.grupocgd.com \
-			-p SSO_REALM=master \
-			-p BUSINESS_CENTRAL_SSO_CLIENT=gcd-rhpamcentral \
-                        -p BUSINESS_CENTRAL_SSO_SECRET=S4nq1SVUiVxhQpgZuP8gDlqKmnraOEcl-ngMC8mA2aM
-			-p KIE_SERVER_SSO_CLIENT=gcd-kieserver \
-			-p KIE_SERVER_SSO_SECRET=S4nq1SVUiVxhQpgZuP8gDlqKmnraOEcl-ngMC8mA2aM
-			-p SSO_USERNAME=ssoadmin \
-			-p SSO_PASSWORD=ssoadmin720! \									
-			-p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true \ -l app=bc
-
-
-
-	oc new-app -f rhpam72-authoring \
-			-p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
-			-p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret \
-			-p APPLICATION_NAME=gcd \
-			-p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
-			-p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass \
-			-p KIE_SERVER_HTTPS_NAME=kieserver \
-			-p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
-			-p KIE_ADMIN_USER=rhpamadmin \
-			-P KIE_ADMIN_PWD=rhpamadmin720! \
-			-p KIE_SERVER_USER=executionUser \
-			-p KIE_SERVER_PWD=executionUser123! \
-			-p KIE_SERVER_CONTROLLER_USER=controllerUser \
-			-p KIE_SERVER_CONTROLLER_PWD=controllerUser123! \
-			-p  \
-			-p  \
-			-p  \
-			-p  \
-			-p  \
-			-p  \
-			-p MAVEN_REPO_URL=http://nexus-nexus.bpmapps.grupocgd.com/repository/maven-public \
-			-p MAVEN_REPO_USERNAME=nexus \
-			-p MAVEN_REPO_PASSWORD=nexus123 \
-			-p MAVEN_REPO_ID=maven-public \
-			-p  \
-			-p SSO_URL=https://gcd-sso-nexus.bpmapps.grupocgd.com \
-			-p SSO_REALM=Master \
-			-p BUSINESS_CENTRAL_SSO_CLIENT=gcd-rhpamcentral \
-		[REMOVE -p BUSINESS_CENTRAL_SSO_SECRET= \
-		[REMOVE]-p BUSINESS_CENTRAL_HOSTNAME_HTTP=http://gcd-rhpamcentr-gcd-dev.bpmapps.grupocgd.com/ \
-		[REMOVE]-p BUSINESS_CENTRAL_HOSTNAME_HTTPS=https://secure-gcd-rhpamcentr-gcd-dev.bpmapps.grupocgd.com/
-			-p KIE_SERVER_SSO_CLIENT=gcd-kieserver \
-		[REMOVE -p KIE_SERVER_SSO_SECRET= \		
-		[REMOVE]-p KIE_SERVER_HOSTNAME_HTTP= \
-		[REMOVE]-p KIE_SERVER_HOSTNAME_HTTPS= \									
-			-p SSO_USERNAME=ssoadmin \
-			-p SSO_PASSWORD=ssoadmin720! \									
-			-p SSO_DISABLE_SSL_CERTIFICATE_VALIDATION=true \
-			-p  \									
-			-p  \
-			-p  \									
-							
-
-							
-
-
+* Create projects at RHPAM Central
+* Add <distribution-management> section (see installation/configuration messages)
+* *Deploy* from RHPAM Central
+* Find Process and execute as executionUser/executionUser123! (externally)
+												
 === PROD Project
 
+	cd ./ocp_pam_app_dev
+	oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
+	oc project pam-dev
+	oc create -f Infrastructure/templates/rhpam72-prod-stelios-1.yaml
+	./Infrastructure/scripts/setup_PROD_managed.sh <YOUR-DEV-NAMESPACE>pam-prod <YOUR-TOOLS-NAMESPACE>tools
 
+* Go to RHPAM Central Monitoring (rhpamadmin/rhpamadmin720)
+* Add deployment Unit to correct kieserver cluster
+* execute against smartrouter/kieserver directly as executionUser/executionUser123
 
+	
 
 === ERRORS
 
