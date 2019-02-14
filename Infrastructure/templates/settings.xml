@@ -7,7 +7,8 @@
       <name>Nexus Public Mirror</name>
       <!--url>http://nexus3-dsk-nexus.apps.na39.openshift.opentlc.com/repository/maven-all-public/</url-->
       <!--url>http://nexus3-GUID-nexus.svc.cluster.local:8081/repository/maven-all-public/</url-->
-      <url>http://nexus3-tools.192.168.42.21.nip.io/repository/maven-all-public/</url>
+      <!--url>http://nexus3-tools.192.168.42.21.nip.io/repository/maven-all-public/</url-->
+      <url>URL</url>
       <mirrorOf>*</mirrorOf>
     </mirror>
   </mirrors>
