@@ -1,5 +1,5 @@
 #!/bin/bash
-# Setup Development Project
+# Setup PRODUCTION Project
 if [ "$#" -ne 2 ]; then
     echo "Usage:"
     echo "  $0 PROD_NAMESPACE TOOLS_NAMESPACE"
@@ -8,7 +8,7 @@ fi
 
 PROD_NAMESPACE=$1
 TOOLS_NAMESPACE=$1
-echo "Setting up RH PAM Development Environment in project ${PROD_NAMESPACE}"
+echo "Setting up RH PAM PRODUCTION Environment in project ${PROD_NAMESPACE}"
 
 
 echo "#################################################################################################"
@@ -29,10 +29,15 @@ echo ""
 
 NEXUS_ROUTE_URL=http://$(oc get route nexus3 --template='{{ .spec.host }}' -n $TOOLS_NAMESPACE)
 echo "NEXUS_ROUTE_URL=$NEXUS_ROUTE_URL"
-sed -i "s/URL .*/${NEXUS_ROUTE_URL}/" ./Infrastructure/templates/settings.xml
+
+# Add NEXUS URL 
+sed -ie "s@URL@${NEXUS_ROUTE_URL}@g" ./Infrastructure/templates/settings.xml
 
 echo "create configmap to contain location of the NEXUS mirror and repositories to be used by RHPAMCENTRAL and KIE SERVER for artifact downloads"
 oc create configmap settings.xml --from-file ./Infrastructure/templates/settings.xml
+
+# Reset back to URL in case need to change for PROD
+sed -ie "s@${NEXUS_ROUTE_URL}@URL@g" ./Infrastructure/templates/settings.xml
 
 echo "Distribution management for RHPAM projects"
 echo ""
