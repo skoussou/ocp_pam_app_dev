@@ -3,6 +3,12 @@
 
 == Making Preperations
 
+=== Access to RH Registry
+
+Directions: https://access.redhat.com/solutions/3812291
+
+	oc create secret generic imagestreamsecret --from-file=.dockerconfigjson=/home/stkousso/Stelios/sw11/PAAS/Distros/minishift/1.27/minishift-1.27.0-linux-amd64/config.json --type=kubernetes.io/dockerconfigjson
+
 === RHSSO
 
 * Installing link:https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_single_sign-on_for_openshift/#using_the_rh_sso_for_openshift_image_streams_and_application_templates[RHSSO 7.2] Templates & Images
@@ -42,9 +48,15 @@
 
 	cd ./ocp_pam_app_dev
 	unzip ./resources/rhpam-7.2.0-openshift-templates.zip
+        oc get is -n openshift |grep rhpam
 	oc create -f ./resources/rhpam72-image-streams.yaml -n openshift
+        oc get is -n openshift |grep rhpam
 
 ==== Put RHPAM images in place
+
+* Check existing images (as cluster admin). we need rhpam72
+
+	oc get images |grep rhpam
 
 * *Business Central*: A platform for authoring business assets such as data objects, rules, processes, cases, and planning entities.
 
@@ -115,10 +127,119 @@
 	oc create -f Infrastructure/templates/rhpam72-authoring-stelios-1.yaml
 	./Infrastructure/scripts/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools
 
+	KIE Server Check: "curl -u executionUser:executionUser123 --insecure https://secure-cgd-kieserver-<YOUR-DEV-NAMESPACE>.apps.<CLUSTER-NAME>/services/rest/server"
+	RHPAM Central Login: rhpamAdmin/rhpamAdmin720
+
+** Create Project
+*** *Step 1*: Create processes etc.
+*** *Step 2*: since no CI-CD we will distribute KJARs directly from 'Business Central' into NEXUS to achieve this
+**** Add on any new project in the settings.xml the following for distribution to NEXUS (*Note: <id>nexus</id> MUST match the'<servers><server><id>nexus</id>' in *Infrastructure/templates/settings.xml*
+
+	 <distributionManagement>
+	   <repository>
+	     <id>nexus</id>
+	     <url>http://<NEXUS-ROUTE>/repository/maven-releases</url>
+	   </repository>
+	   <snapshotRepository>
+	     <id>nexus</id>
+	     <url>http://<NEXUS-ROUTE>/repository/maven-snapshots</url>
+	   </snapshotRepository>
+	 </distributionManagement>	
+
+**** 'Deploy' from 'Business Central' into the KieServer and confirm that KieContainer is started by looking for the appropriate *container-alias*
+
+	curl -u executionUser:executionUser123 -X GET "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers" --insecure -H  "accept: application/xml"
+
+	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<response type="SUCCESS" msg="List of created containers">
+	    <kie-containers>
+		<kie-container container-alias="retail-proc-1" container-id="retail-proc-1_1.0.0" status="STARTED">
+		    <config-items>
+		        <itemName>KBase</itemName>
+		        <itemValue></itemValue>
+		        <itemType>BPM</itemType>
+		    </config-items>
+		    <config-items>
+		        <itemName>KSession</itemName>
+		        <itemValue></itemValue>
+		        <itemType>BPM</itemType>
+		    </config-items>
+		    <config-items>
+		        <itemName>MergeMode</itemName>
+		        <itemValue>MERGE_COLLECTIONS</itemValue>
+		        <itemType>BPM</itemType>
+		    </config-items>
+		    <config-items>
+		        <itemName>RuntimeStrategy</itemName>
+		        <itemValue>SINGLETON</itemValue>
+		        <itemType>BPM</itemType>
+		    </config-items>
+		    <messages>
+		        <content>Container retail-proc-1_1.0.0 successfully created with module com.cgdretailprocesses:retail-proc-1:1.0.0.</content>
+		        <severity>INFO</severity>
+		        <timestamp>2019-02-15T16:17:43.934Z</timestamp>
+		    </messages>
+		    <release-id>
+		        <artifact-id>retail-proc-1</artifact-id>
+		        <group-id>com.cgdretailprocesses</group-id>
+		        <version>1.0.0</version>
+		    </release-id>
+		    <resolved-release-id>
+		        <artifact-id>retail-proc-1</artifact-id>
+		        <group-id>com.cgdretailprocesses</group-id>
+		        <version>1.0.0</version>
+		    </resolved-release-id>
+		    <scanner status="DISPOSED"/>
+		</kie-container>
+	    </kie-containers>
+	</response>
+
+
+**** 'Find' the process in the deployed KJAR (ie. the runnalable RHPAM projet) by using from the previous result the alias or id of the KieContainer (container-alias="retail-proc-1" container-id="retail-proc-1_1.0.0")
+
+	curl -u executionUser:executionUser123 -X GET "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1/processes?page=0&pageSize=10&sortOrder=true" --insecure -H  "accept: application/xml"
+
+	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<process-definitions>
+	    <processes>
+		<process-id>com.cgdretailprocesses.retail_proc_1.printname</process-id>
+		<process-name>printname</process-name>
+		<process-version>1.0</process-version>
+		<package>com.cgdretailprocesses.retail_proc_1</package>
+		<container-id>retail-proc-1_1.0.0</container-id>
+		<dynamic>false</dynamic>
+	    </processes>
+	</process-definitions>
+
+**** 'Execute' against the KieContainer by starting a new process
+***** Using the *alias* 
+
+	curl -u executionUser:executionUser123 --insecure -X POST "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1/processes/com.cgdretailprocesses.retail_proc_1.printname/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
+
+
+	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<long-type>
+	      <value>1</value>
+	</long-type>
+
+***** Using the *container-id* 
+
+	curl -u executionUser:executionUser123 --insecure -X POST "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1_1.0.0/processes/com.cgdretailprocesses.retail_proc_1.printname/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
+
+
+	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<long-type>
+	      <value>2</value>
+	</long-type>
+
+
+
 * Create projects at RHPAM Central
 * Add <distribution-management> section (see installation/configuration messages)
 * *Deploy* from RHPAM Central
 * Find Process and execute as executionUser/executionUser123! (externally)
+
+
 												
 === PROD Project
 
