@@ -273,6 +273,23 @@ image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instance
 
 ==== Deploying, Executing, Monitoring, Managing Process Projects in PROD
 	
+* *Step 1*: Login to *Business Central Monitor* (above) and inspect the deployments on the different Server Configuration (Templates). There should be 3 (see below)
+
+image:pics/rhpamcentral-monitor-BEGIN.png["RHPAMCentral Monitor",height=480]
+
+* *Step 2*: There are no Deployment Units (ie. KJARs with processes/rules to deploy) as they exist remotely on the nexus server. With the *cgd-retail-kieserver-cluster-group-1* selected press *Add Deployment Unit* and add (as per screenshots) the KJAR (based on your project's Group Artifact Version -GAV- details-) the KJAR you wish deployed in the GROUP Of KIESERVERs that will use RHPAM template configuration *cgd-retail-kieserver-cluster-group-1* 
+
+image:pics/Add-Deployment-Unit.png["RHPAMCentral Add new Project to KIE Server",height=480]
+
+image:pics/Add-Deployment-Unit-RuntimeConfigurations.png["RHPAMCentral Monitor",height=480]
+** Use the "Start" button to initialize the RHPAM Process project (KieContainer) inside the KIESERVERs (should get a gree
+
+image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=480]
+
+
+** Side note: The JARs are downloaded locally at '/opt/eap/standalone/data/kie/maven-repository/' in the container
+
+
 
 ==== Installing with single external Database
 
