@@ -263,12 +263,12 @@ image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instance
 
 ==== Resulting Installation
 
-*Business Central Monitor*: https://secure-cgd-retail-rhpamcentrmon-pam-prod.apps.fe44.example.opentlc.com/
-*Smart Router*: http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/
-*KIE Server Cluster Group-1*: https://secure-cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com/docs
-*cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1*
-*KIE Server Cluster Group-2*: https://secure-cgd-retail-kieserver-cluster-group-2-pam-prod.apps.fe44.example.opentlc.com/docs
-*cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1*
+- *Business Central Monitor*: https://secure-cgd-retail-rhpamcentrmon-pam-prod.apps.fe44.example.opentlc.com/
+- *Smart Router*: http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/
+- *KIE Server Cluster Group-1*: https://secure-cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com/docs
+- *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1*
+- *KIE Server Cluster Group-2*: https://secure-cgd-retail-kieserver-cluster-group-2-pam-prod.apps.fe44.example.opentlc.com/docs
+- *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1*
 
 
 ==== Deploying, Executing, Monitoring, Managing Process Projects in PROD
