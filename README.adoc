@@ -263,12 +263,12 @@ image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instance
 
 ==== Resulting Installation
 
-- *Business Central Monitor*: https://secure-cgd-retail-rhpamcentrmon-pam-prod.apps.fe44.example.opentlc.com/
-- *Smart Router*: http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/
+- *Business Central Monitor*: https://secure-cgd-retail-rhpamcentrmon-pam-prod.apps.fe44.example.opentlc.com/ (rhpamAdmin/rhpamAdmin720, used to deploy KJAR projects, manage KJAR and template configurations, monitor)
+- *Smart Router*: http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/ (Service used as smart proxy of processes on any connected KIESERVER cluster group)
 - *KIE Server Cluster Group-1*: https://secure-cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com/docs
-- *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1*
+- *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1* (Runs a KJAR(s) related to a division and has dedicated Database)
 - *KIE Server Cluster Group-2*: https://secure-cgd-retail-kieserver-cluster-group-2-pam-prod.apps.fe44.example.opentlc.com/docs
-- *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1*
+- *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1* (Runs a *separate from Cluster Group-1* KJAR(s) related to a *secondary* division and has dedicated Database)
 
 
 ==== Deploying, Executing, Monitoring, Managing Process Projects in PROD
