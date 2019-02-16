@@ -7,7 +7,7 @@ if [ "$#" -ne 2 ]; then
 fi
 
 PROD_NAMESPACE=$1
-TOOLS_NAMESPACE=$1
+TOOLS_NAMESPACE=$2
 echo "Setting up RH PAM PRODUCTION Environment in project ${PROD_NAMESPACE}"
 
 
@@ -31,13 +31,13 @@ NEXUS_ROUTE_URL=http://$(oc get route nexus3 --template='{{ .spec.host }}' -n $T
 echo "NEXUS_ROUTE_URL=$NEXUS_ROUTE_URL"
 
 # Add NEXUS URL 
-sed -ie "s@URL@${NEXUS_ROUTE_URL}@g" ./Infrastructure/templates/settings.xml
+sed -ie "s@URL@${NEXUS_ROUTE_URL}/repository/maven-all-public/@g" ./Infrastructure/templates/settings.xml
 
 echo "create configmap to contain location of the NEXUS mirror and repositories to be used by RHPAMCENTRAL and KIE SERVER for artifact downloads"
 oc create configmap settings.xml --from-file ./Infrastructure/templates/settings.xml
 
 # Reset back to URL in case need to change for PROD
-sed -ie "s@${NEXUS_ROUTE_URL}@URL@g" ./Infrastructure/templates/settings.xml
+sed -ie "s@${NEXUS_ROUTE_URL}/repository/maven-all-public/@URL@g" ./Infrastructure/templates/settings.xml
 
 echo "Distribution management for RHPAM projects"
 echo ""
@@ -77,7 +77,7 @@ echo "               cd /opt/eap/bin"
 echo "               ./add-user.sh -a -u <user-name> -p <password> -g kie-server,rest-all,<YOUR ROLE from Business Process>"
 echo "#################################################################################################"
 echo ""
-oc new-app --template=rhpam72-prod-stelios-1  -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret  -p APPLICATION_NAME=cgd-retail -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral  -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass  -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks  -p KIE_SERVER_HTTPS_NAME=kieserver  -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass   -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks  -p KIE_ADMIN_USER=rhpamadmin   -p KIE_ADMIN_PWD=rhpamadmin720   -p KIE_SERVER_USER=executionUser   -p KIE_SERVER_PWD=executionUser123   -p KIE_SERVER_CONTROLLER_USER=controllerUser   -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 -p MAVEN_REPO_URL=http://nexus3-tools.192.168.42.21.nip.io/maven-public  -p MAVEN_REPO_USERNAME=admin  -p MAVEN_REPO_PASSWORD=admin123  -p MAVEN_REPO_ID=maven-public -p SMART_ROUTER_CONTAINER_REPLICAS=1 -p KIE_SERVER_CONTAINER_REPLICAS=1 -l app=pamprod -n pam-prod
+oc new-app --template=rhpam72-prod-stelios-1  -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret  -p APPLICATION_NAME=cgd-retail -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral  -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass  -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks  -p KIE_SERVER_HTTPS_NAME=kieserver  -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass   -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks  -p KIE_ADMIN_USER=rhpamadmin   -p KIE_ADMIN_PWD=rhpamadmin720   -p KIE_SERVER_USER=executionUser   -p KIE_SERVER_PWD=executionUser123   -p KIE_SERVER_CONTROLLER_USER=controllerUser   -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 -p MAVEN_REPO_URL=${NEXUS_ROUTE_URL}/maven-public  -p MAVEN_REPO_USERNAME=admin  -p MAVEN_REPO_PASSWORD=admin123  -p MAVEN_REPO_ID=maven-public -p SMART_ROUTER_CONTAINER_REPLICAS=1 -p KIE_SERVER_CONTAINER_REPLICAS=1 -l app=pamprod -n pam-prod
 
 echo ""
 echo ""

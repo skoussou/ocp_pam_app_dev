@@ -7,7 +7,7 @@ if [ "$#" -ne 2 ]; then
 fi
 
 DEV_NAMESPACE=$1
-TOOLS_NAMESPACE=$1
+TOOLS_NAMESPACE=$2
 echo "Setting up RH PAM Development Environment in project ${DEV_NAMESPACE}"
 
 
@@ -18,7 +18,7 @@ echo " Business Central keystore: ocp_pam_app_dev/Infrastructure/templates/secre
 echo "#################################################################################################"
 
 oc create secret generic businesscentral-app-secret --from-file=./Infrastructure/templates/secrets/bckeystore.jks -n ${DEV_NAMESPACE}
-oc create secret generic businesscentral-app-secret --from-file=./Infrastructure/templates/secrets/kiekeystore.jks -n ${DEV_NAMESPACE}
+oc create secret generic kieserver-app-secret --from-file=./Infrastructure/templates/secrets/kiekeystore.jks -n ${DEV_NAMESPACE}
 
 echo ""
 echo ""
@@ -29,10 +29,13 @@ echo ""
 
 NEXUS_ROUTE_URL=http://$(oc get route nexus3 --template='{{ .spec.host }}' -n $TOOLS_NAMESPACE)
 echo "NEXUS_ROUTE_URL=$NEXUS_ROUTE_URL"
-sed -i "s/URL .*/${NEXUS_ROUTE_URL}/" ./Infrastructure/templates/settings.xml
+sed -i "s@URL@${NEXUS_ROUTE_URL}/repository/maven-all-public/@" ./Infrastructure/templates/settings.xml
 
 echo "create configmap to contain location of the NEXUS mirror and repositories to be used by RHPAMCENTRAL and KIE SERVER for artifact downloads"
 oc create configmap settings.xml --from-file ./Infrastructure/templates/settings.xml
+
+# Reset back to URL in case need to change for PROD
+sed -ie "s@${NEXUS_ROUTE_URL}/repository/maven-all-public/@URL@g" ./Infrastructure/templates/settings.xml
 
 echo "Distribution management for RHPAM projects"
 echo ""

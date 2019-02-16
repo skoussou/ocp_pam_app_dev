@@ -92,6 +92,8 @@ echo "Configuring NEXUS"
 echo "./Infrastructure/scripts/extras/configure_nexus3.sh admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}' -n $NAMESPACE)"
 echo "#####################################################################"
 
+sleep 5
+
 SCRIPT_PATH="./Infrastructure/scripts/extras/configure_nexus3.sh"
 source "$SCRIPT_PATH"
 . "$SCRIPT_PATH" admin admin123 http://$(oc get route nexus3 --template='{{ .spec.host }}' -n $NAMESPACE)

@@ -19,3 +19,11 @@ do
   echo "inserting template/imagestream ${resource} in openshift namespace"
   oc replace -n openshift --force -f https://raw.githubusercontent.com/jboss-container-images/redhat-sso-7-openshift-image/rh-sso-7.2-v1.3.0/templates/${resource}
 done
+
+echo ""
+echo "Image Streams for RHSSO at namespace openshift"
+oc get is -n openshift |grep sso
+
+echo ""
+echo "Image Streams for RHSSO at namespace openshift"
+oc get images |grep sso

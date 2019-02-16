@@ -232,13 +232,15 @@ Directions: https://access.redhat.com/solutions/3812291
 	      <value>2</value>
 	</long-type>
 
+***** To see the current deployed process definitions *Menu --> Process Definitions*
 
+	https://secure-cgd-rhpamcentr-pam-dev.apps.fe44.example.opentlc.com/kie-wb.jsp#ProcessDefinitions%7CProcessDefinitionListScreen
 
-* Create projects at RHPAM Central
-* Add <distribution-management> section (see installation/configuration messages)
-* *Deploy* from RHPAM Central
-* Find Process and execute as executionUser/executionUser123! (externally)
+image:pics/ProcessDefinitions-Diagram.png["Process Definition Diagram",height=180]
 
+***** To see the current deployed process definitions *Menu --> Process Definitions*
+
+image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instances",height=180]
 
 												
 === PROD Project
