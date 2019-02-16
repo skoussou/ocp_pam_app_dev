@@ -18,7 +18,7 @@ echo " Business Central keystore: ocp_pam_app_dev/Infrastructure/templates/secre
 echo "#################################################################################################"
 
 oc create secret generic businesscentral-app-secret --from-file=./Infrastructure/templates/secrets/bckeystore.jks -n ${PROD_NAMESPACE}
-oc create secret generic businesscentral-app-secret --from-file=./Infrastructure/templates/secrets/kiekeystore.jks -n ${PROD_NAMESPACE}
+oc create secret generic kieserver-app-secret --from-file=./Infrastructure/templates/secrets/kiekeystore.jks -n -n ${PROD_NAMESPACE}
 
 echo ""
 echo ""
