@@ -261,17 +261,22 @@ image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instance
 	oc create -f Infrastructure/templates/rhpam72-prod-stelios-1.yaml
 	./Infrastructure/scripts/setup_PROD_managed.sh <YOUR-DEV-NAMESPACE>pam-prod <YOUR-TOOLS-NAMESPACE>tools
 
-* Go to RHPAM Central Monitoring (rhpamadmin/rhpamadmin720)
-* Add deployment Unit to correct kieserver cluster
-* execute against smartrouter/kieserver directly as executionUser/executionUser123
+==== Resulting Installation
 
+*Business Central Monitor*: https://secure-cgd-retail-rhpamcentrmon-pam-prod.apps.fe44.example.opentlc.com/
+*Smart Router*: http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/
+*KIE Server Cluster Group-1*: https://secure-cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com/docs
+*cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1*
+*KIE Server Cluster Group-2*: https://secure-cgd-retail-kieserver-cluster-group-2-pam-prod.apps.fe44.example.opentlc.com/docs
+*cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1*
+
+
+==== Deploying, Executing, Monitoring, Managing Process Projects in PROD
 	
 
-=== ERRORS
+==== Installing with single external Database
 
-==== BC
 
-=== KIESERVER
 
 	
 
