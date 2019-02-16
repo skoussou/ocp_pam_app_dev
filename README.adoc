@@ -284,8 +284,7 @@ image:pics/Add-Deployment-Unit.png["RHPAMCentral Add new Project to KIE Server",
 image:pics/Add-Deployment-Unit-RuntimeConfigurations.png["RHPAMCentral Monitor",height=480]
 ** Use the "Start" button to initialize the RHPAM Process project (KieContainer) inside the KIESERVERs (should get a gree
 
-image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=480]
-
+image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=360]
 
 ** Side note: The JARs are downloaded locally at '/opt/eap/standalone/data/kie/maven-repository/' in the container
 
