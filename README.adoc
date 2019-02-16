@@ -150,6 +150,8 @@ Directions: https://access.redhat.com/solutions/3812291
 
 	curl -u executionUser:executionUser123 -X GET "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers" --insecure -H  "accept: application/xml"
 
+	[RESPONSE]
+	----------------------------------
 	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 	<response type="SUCCESS" msg="List of created containers">
 	    <kie-containers>
@@ -209,6 +211,8 @@ image:pics/kieserver-dev-kiecontainers-deployed.png["KieContainers active on DEV
 
 	curl -u executionUser:executionUser123 -X GET "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1/processes?page=0&pageSize=10&sortOrder=true" --insecure -H  "accept: application/xml"
 
+	[RESPONSE]
+	----------------------------------
 	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 	<process-definitions>
 	    <processes>
@@ -226,7 +230,8 @@ image:pics/kieserver-dev-kiecontainers-deployed.png["KieContainers active on DEV
 
 	curl -u executionUser:executionUser123 --insecure -X POST "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1/processes/com.cgdretailprocesses.retail_proc_1.printname/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
 
-
+	[RESPONSE]
+	----------------------------------
 	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 	<long-type>
 	      <value>1</value>
@@ -236,7 +241,8 @@ image:pics/kieserver-dev-kiecontainers-deployed.png["KieContainers active on DEV
 
 	curl -u executionUser:executionUser123 --insecure -X POST "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1_1.0.0/processes/com.cgdretailprocesses.retail_proc_1.printname/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
 
-
+	[RESPONSE]
+	----------------------------------
 	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 	<long-type>
 	      <value>2</value>
@@ -288,6 +294,98 @@ image:pics/Add-Deployment-Unit-RuntimeConfigurations.png["RHPAMCentral Monitor",
 image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 ** Side note: The JARs are downloaded locally at '/opt/eap/standalone/data/kie/maven-repository/' in the container
+
+* *Step 3*: Retrieve ALL Active KieContainers (ie. projects to execute processes against) using the *Smart Router* rather than individual KIESERVER cluster groups
+
+	# curl -u executionUser:executionUser123 -X GET "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers" -H  "accept: application/xml"
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<response msg="List of created containers" type="SUCCESS">    
+	  <kie-containers>        
+	    <kie-container container-alias="" container-id="morgages" status="STARTED">            
+	      <config-items>                
+		<itemName>KBase</itemName>                
+		<itemValue/>                
+		<itemType>BPM</itemType>            
+	      </config-items>            
+	      <config-items>                
+		<itemName>KSession</itemName>                
+		<itemValue/>                
+		<itemType>BPM</itemType>            
+	      </config-items>            
+	      <config-items>                
+		<itemName>MergeMode</itemName>                
+		<itemValue>MERGE_COLLECTIONS</itemValue>                
+		<itemType>BPM</itemType>            
+	      </config-items>            
+	      <config-items>                
+		<itemName>RuntimeStrategy</itemName>                
+		<itemValue>PER_PROCESS_INSTANCE</itemValue>                
+		<itemType>BPM</itemType>            
+	      </config-items>            
+	      <messages>                
+		<content>Container morgages successfully created with module com.cgdretailprocesses:mortgage-rules-1:1.0.0.</content>                
+		<severity>INFO</severity>                
+		<timestamp>2019-02-16T10:27:27.116Z</timestamp>            
+	      </messages>            
+	      <release-id>                
+		<artifact-id>mortgage-rules-1</artifact-id>               
+		<group-id>com.cgdretailprocesses</group-id>                
+		<version>1.0.0</version>            
+	      </release-id>            
+		    <resolved-release-id>                
+		<artifact-id>mortgage-rules-1</artifact-id>                
+		<group-id>com.cgdretailprocesses</group-id>                
+		<version>1.0.0</version>            
+	      </resolved-release-id>            
+	      <scanner status="DISPOSED"/>
+	    </kie-container>
+	  </kie-containers>        
+
+** Retrieve Available processes in KieContainer
+
+	# curl -u executionUser:executionUser123 -X GET "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers/morgages/processes" -H  "accept: application/xml"
+
+	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<process-definitions>
+	    <processes>
+		<process-id>com.cgdretailprocesses.loanapproval</process-id>
+		<process-name>loanapproval</process-name>
+		<process-version>1.0</process-version>
+		<package>com.cgdretailprocesses</package>
+		<container-id>morgages</container-id>
+		<dynamic>false</dynamic>
+	    </processes>
+	</process-definitions>
+
+** Check the *Smart Router* configuration manually
+
+	oc rsh cgd-retail-smartrouter-1-7f2cw
+	$ cat /opt/rhpam-smartrouter/data/kie-server-router.json   
+	{
+	  "containerInfo": [{
+	    "alias": "mortgage-rules-1",
+	    "containerId": "morgages",
+	    "releaseId": "com.cgdretailprocesses:mortgage-rules-1:1.0.0"
+	  }],
+	  "containers": [
+	    {"mortgage-rules-1": ["http://cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com:80/services/rest/server"]},
+	    {"morgages": ["http://cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com:80/services/rest/server"]}
+	  ],
+	  "servers": [{"cgd-retail-kieserver-cluster-group-1": ["http://cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com:80/services/rest/server"]}]
+	}	
+
+
+** *Step 4*: Execute process *com.cgdretailprocesses.loanapproval* on KieContainer *morgages* and KIESERVERs *cgd-retail-kieserver-cluster-group-1* via the *Smart Router* configuration manually
+	curl -u executionUser:executionUser123 -X POST "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers/morgages/processes/com.cgdretailprocesses.loanapproval/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
+
+	[RESPONSE]
+	----------------------------------
+	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<long-type>
+	    <value>1</value>
+	</long-type>
+
 
 
 
