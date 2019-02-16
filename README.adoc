@@ -194,6 +194,16 @@ Directions: https://access.redhat.com/solutions/3812291
 	    </kie-containers>
 	</response>
 
+***** Check NEXUS where now the KJAR(s) would have been uploaded to and where the DEV KieServer has been configued to download them from Definitions*
+
+	http://nexus3-tools.apps.fe44.example.opentlc.com/#browse/browse:maven-all-public
+
+	image:pics/nexus-kjar-distributed.png["Uploaded KJARs to NEXUS",height=180]
+
+***** Go to Business Central *Menu --> Execution Servers" & Click on the Remote Servers (only one available) too see the KieContainers created from the deployed KJARs
+
+	image:pics/kieserver-dev-kiecontainers-deployed.png["KieContainers active on DEV KieServer",height=180]
+
 
 **** 'Find' the process in the deployed KJAR (ie. the runnalable RHPAM projet) by using from the previous result the alias or id of the KieContainer (container-alias="retail-proc-1" container-id="retail-proc-1_1.0.0")
 
@@ -236,11 +246,11 @@ Directions: https://access.redhat.com/solutions/3812291
 
 	https://secure-cgd-rhpamcentr-pam-dev.apps.fe44.example.opentlc.com/kie-wb.jsp#ProcessDefinitions%7CProcessDefinitionListScreen
 
-image:pics/ProcessDefinitions-Diagram.png["Process Definition Diagram",height=180]
+	image:pics/ProcessDefinitions-Diagram.png["Process Definition Diagram",height=180]
 
-***** To see the current deployed process definitions *Menu --> Process Definitions*
+***** To see the current deployed process definitions *Menu --> Process Instances*
 
-image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instances",height=180]
+	image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instances",height=180]
 
 												
 === PROD Project
