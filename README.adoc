@@ -387,6 +387,12 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 	</long-type>
 
 
+	Check the logs of the pod running the 'morgages' KieContainer
+	--------------------------------------------------------------
+	# oc logs -f cgd-retail-kieserver-cluster-group-1-1-wqsp
+	10:27:27,105 INFO  [org.kie.server.services.impl.KieServerImpl] (default task-1) Container morgages (for release id com.cgdretailprocesses:mortgage-rules-1:1.0.0) successfully started
+	10:27:27,164 INFO  [org.kie.server.router.client.KieServerRouterEventListener] (default task-1) Added 'http://cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com:80/services/rest/server' as server location for container id 'morgages'
+	11:06:25,368 INFO  [stdout] (default task-1) LOAN APPROVED
 
 
 ==== Installing with single external Database
