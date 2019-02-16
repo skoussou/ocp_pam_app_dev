@@ -377,6 +377,7 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 
 ** *Step 4*: Execute process *com.cgdretailprocesses.loanapproval* on KieContainer *morgages* and KIESERVERs *cgd-retail-kieserver-cluster-group-1* via the *Smart Router* configuration manually
+
 	curl -u executionUser:executionUser123 -X POST "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers/morgages/processes/com.cgdretailprocesses.loanapproval/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
 
 	[RESPONSE]
