@@ -241,6 +241,8 @@ image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instance
 												
 === PROD Project
 
+	image:pics/RH-PAM-NoCICD-Flow.png["Non-CICD RHPAM Setup",height=360]
+
 	cd ./ocp_pam_app_dev
 	oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 	oc project pam-prod
