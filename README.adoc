@@ -263,7 +263,7 @@ image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instance
 
 	cd ./ocp_pam_app_dev
 	oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
-	oc project pam-dev
+	oc project pam-prod
 	oc create -f Infrastructure/templates/rhpam72-prod-stelios-1.yaml
 	./Infrastructure/scripts/setup_PROD_managed.sh <YOUR-DEV-NAMESPACE>pam-prod <YOUR-TOOLS-NAMESPACE>tools
 
@@ -274,7 +274,7 @@ image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instance
 - *KIE Server Cluster Group-1*: https://secure-cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com/docs
 - *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1* (Runs a KJAR(s) related to a division and has dedicated Database)
 - *KIE Server Cluster Group-2*: https://secure-cgd-retail-kieserver-cluster-group-2-pam-prod.apps.fe44.example.opentlc.com/docs
-- *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1* (Runs a *separate from Cluster Group-1* KJAR(s) related to a *secondary* division and has dedicated Database)
+- *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-2* (Runs a *separate from Cluster Group-1* KJAR(s) related to a *secondary* division and has dedicated Database)
 
 
 ==== Deploying, Executing, Monitoring, Managing Process Projects in PROD
@@ -396,8 +396,117 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 	11:06:25,368 INFO  [stdout] (default task-1) LOAN APPROVED
 
 
-==== Installing with single external Database
+=== Installing PRODUCTION environment with SINGLE external Database Server for proceses
 
+* You have logged on to your project in the OpenShift environment using the oc command as a user with the *cluster-admin* role.
+* For Oracle DB driver can be found in this repository Link:https://github.com/skoussou/ocp_pam_app_dev/blob/master/Infrastructure/resources/drivers/oracle/com/oracle/ojdbc7/12.1.0.1/ojdbc7-12.1.0.1.jar[here]
+* For IBM DB2, Oracle Database, or Sybase, you have downloaded the JDBC driver from the database server vendor. More in Link:3.4. Building a custom Process Server image for an external database[documentation here]
+* Install the source code for the custom build,
+
+	cd ./ocp_pam_app_dev
+	oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
+        oc project pam-prod
+	unzip ./resources/rhpam-7.2.0-openshift-templates.zip
+	cd ./resources/templates/contrib/jdbc
+	[root@bastion jdbc]# ll
+	total 12
+	-rwxrwxr-x. 1 ec2-user ec2-user 3012 Jan 18 09:37 build.sh
+	drwxrwxr-x. 3 ec2-user ec2-user   65 Jan 18 09:37 db2-driver-image
+	drwxrwxr-x. 3 ec2-user ec2-user   65 Feb 15 13:20 derby-driver-image
+	-rwxrwxr-x. 1 ec2-user ec2-user  459 Jan 18 09:37 install.sh
+	drwxrwxr-x. 3 ec2-user ec2-user   65 Jan 18 09:37 mariadb-driver-image
+	drwxrwxr-x. 3 ec2-user ec2-user   65 Feb 15 13:20 mssql-driver-image
+	drwxrwxr-x. 3 ec2-user ec2-user   65 Feb 15 13:20 oracle-driver-image
+	-rw-rw-r--. 1 ec2-user ec2-user 1933 Jan 18 09:37 README.md
+	drwxrwxr-x. 3 ec2-user ec2-user   65 Jan 18 09:37 sybase-driver-image
+
+==== For MariaDB, mariadb-driver-image
+
+* Change to subdirectory: *mariadb-driver-image*
+** #../build.sh [--registry=myregistry.example.com:5000] [--artifact-repo=https://myrepo.example.com/maven/public] [--image-tag=1.1 ]
+
+	cd ./resources/templates/contrib/jdbc/*mariadb-driver-image/
+	../build.sh --registry=docker-registry.default.svc:5000
+	...
+	--> Creating resources with label build=rhpam72-kieserver-mariadb-openshift ...
+	    imagestream.image.openshift.io "rhpam72-kieserver-mariadb-openshift" created
+	    buildconfig.build.openshift.io "rhpam72-kieserver-mariadb-openshift" created
+	--> Success
+
+** Check for the newly built RHPAM2 image/ImageStream *rhpam72-kieserver-mariadb-openshift* which contains *mariadb* database driver
+	# oc get is -n openshift |grep rhpam72-kieserver-mariadb-openshift
+	rhpam72-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift
+
+	# oc describe is rhpam72-kieserver-mariadb-openshift -n openshift
+	Name:                   rhpam72-kieserver-mariadb-openshift
+	Namespace:              openshift
+	Created:                4 minutes ago
+	Labels:                 build=rhpam72-kieserver-mariadb-openshift
+	Annotations:            openshift.io/generated-by=OpenShiftNewBuild
+	Docker Pull Spec:       docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift
+	Image Lookup:           local=false
+	Unique Images:          1
+	Tags:                   1
+
+	1.1
+	  no spec tag
+
+	  * docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift@sha256:6d330a9aa901c47e9937ed16732d46ceb000ae20a73afdb8b952d6249d5abdaf
+	      About a minute ago
+
+
+==== For Oracle Database, mariadb-driver-image
+
+* Change to subdirectory: *oracle-driver-image*
+** #../build.sh [--registry=myregistry.example.com:5000] [--artifact-repo=https://myrepo.example.com/maven/public] [--image-tag=1.1 ]
+
+	cd ./resources/templates/contrib/jdbc/oracle-driver-image/
+	../build.sh --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/oracle" --registry=docker-registry.default.svc:5000
+	...
+	--> Creating resources with label build=rhpam72-kieserver-oracle-openshift ...
+	    imagestream.image.openshift.io "rhpam72-kieserver-oracle-openshift" created
+	    buildconfig.build.openshift.io "rhpam72-kieserver-oracle-openshift" created
+	--> Success
+
+
+** Check for the newly built RHPAM2 image/ImageStream *rhpam72-kieserver-oracle-openshift* which contains *oracle* database driver
+
+	# oc get is rhpam72-kieserver-oracle-openshift -n openshift
+	NAME                                 DOCKER REPO                                                                     TAGS      UPDATED
+	rhpam72-kieserver-oracle-openshift   docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift   1.1       47 seconds ago
+
+	[root@master1 oracle-driver-image]# oc describe is rhpam72-kieserver-oracle-openshift -n openshift
+	Name:                   rhpam72-kieserver-oracle-openshift
+	Namespace:              openshift
+	Created:                About a minute ago
+	Labels:                 build=rhpam72-kieserver-oracle-openshift
+	Annotations:            openshift.io/generated-by=OpenShiftNewBuild
+	Docker Pull Spec:       docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift
+	Image Lookup:           local=false
+	Unique Images:          1
+	Tags:                   1
+
+	1.1
+	  no spec tag
+
+	  * docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift@sha256:e0720bec08445941b2944914f967433c2e093d54bad353c74de1082f289ba954
+	      About a minute ago
+
+
+
+
+
+        oc get is -n openshift |grep rhpam
+	oc create -f ./resources/rhpam72-image-streams.yaml -n openshift
+
+
+
+	oc project pam-dev
+	oc create -f Infrastructure/templates/rhpam72-authoring-stelios-1.yaml
+	./Infrastructure/scripts/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools
+
+
+Install the source code for the custom build, download the rhpam-7.2.0-openshift-templates.zip product deliverable file from the Software Downloads page. Unzip the file and, using the command line, change to the templates/contrib/jdbc directory of the unzipped file.
 
 
 	
