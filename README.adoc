@@ -241,7 +241,8 @@ image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instance
 												
 === PROD Project
 
-image:pics/RH-PAM-NoCICD-Flow.png["Non-CICD RHPAM Setup",width=1080, height=780]
+image:pics/RH-PAM-NoCICD-Flow.png[alt="Non-CICD RHPAM Setup with Internal DBs",width=1080, height=780]
+
 
 	cd ./ocp_pam_app_dev
 	oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
@@ -473,6 +474,8 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 
 ==== Installing PROD with external mariadb database
+
+image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Single External DB",width=1080, height=780]
 
 	oc project pam-prod
 	oc create -f Infrastructure/templates/rhpam72-PROD-mariadb-stelios-1.yaml
