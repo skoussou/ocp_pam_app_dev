@@ -420,7 +420,7 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 	-rw-rw-r--. 1 ec2-user ec2-user 1933 Jan 18 09:37 README.md
 	drwxrwxr-x. 3 ec2-user ec2-user   65 Jan 18 09:37 sybase-driver-image
 
-==== For MariaDB, mariadb-driver-image
+==== Preparing RHPAM image For MariaDB, mariadb-driver-image
 
 * Change to subdirectory: *mariadb-driver-image*
 ** #../build.sh [--registry=myregistry.example.com:5000] [--artifact-repo=https://myrepo.example.com/maven/public] [--image-tag=1.1 ]
@@ -453,7 +453,7 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 	      About a minute ago
 
 
-==== For Oracle Database, mariadb-driver-image
+==== Preparing RHPAM image for Oracle Database, mariadb-driver-image
 
 * Change to subdirectory: *oracle-driver-image*
 ** #../build.sh [--registry=myregistry.example.com:5000] [--artifact-repo=https://myrepo.example.com/maven/public] [--image-tag=1.1 ]
@@ -490,21 +490,19 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 
 
+==== Installing PROD with external mariadb database
+
+	oc project pam-prod
+	oc create -f Infrastructure/templates/rhpam72-PROD-mariadb-stelios-1.yaml
+	./Infrastructure/scripts/setup_PROD_mariadb_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools
 
 
-        oc get is -n openshift |grep rhpam
-	oc create -f ./resources/rhpam72-image-streams.yaml -n openshift
+
+==== Installing PROD with external ORacle (to be done on-site)
 
 
 
-	oc project pam-dev
-	oc create -f Infrastructure/templates/rhpam72-authoring-stelios-1.yaml
-	./Infrastructure/scripts/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools
-
-
-Install the source code for the custom build, download the rhpam-7.2.0-openshift-templates.zip product deliverable file from the Software Downloads page. Unzip the file and, using the command line, change to the templates/contrib/jdbc directory of the unzipped file.
-
-
+=== Setting & Utilizing Openshift Autoscaler
 	
 
 
