@@ -17,30 +17,10 @@ Directions: https://access.redhat.com/solutions/3812291
 	cd ./ocp_pam_app_dev
 	./Infrastructure/scripts/prepare_env_sso.sh
 
-	# DEPRECATED
-	--------------------
-	# oc create -f https://github.com/jboss-container-images/redhat-sso-7-openshift-image/blob/sso72-dev/templates/sso72-image-stream.json -n openshift
-	# for resource in sso72-image-stream.json \
-	#   sso72-https.json \
-	#   sso72-mysql-persistent.json \
-	#   sso72-mysql.json \
-	#   sso72-postgresql-persistent.json \
-	#   sso72-postgresql.json
-	# do
-	#   oc replace -n openshift --force -f \
-	#   https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.16/sso/${resource}
-	# done
-
-
-* Run the following command to install the RH-SSO 7.2 OpenShift image streams in the openshift project:
-
-        oc import-image redhat-sso72-openshift:1.0 -n openshift
-        oc import-image redhat-sso72-openshift:1.1 -n openshift
-        oc import-image redhat-sso72-openshift:1.2 -n openshift
-
 === Nexus
 
-* *TBD*
+* No special prep required if access to external Red Hat Maven repositories is possible and 
+* The NEXUS image 'docker.io/sonatype/nexus3' is possible to download
 
 === RHPAM
 
@@ -114,7 +94,7 @@ Directions: https://access.redhat.com/solutions/3812291
 		
 3. jenkins
 4. gogs
-5. quay.io?
+5. quay.io
 
 
 === DEV Project
@@ -131,18 +111,18 @@ Directions: https://access.redhat.com/solutions/3812291
 	RHPAM Central Login: rhpamAdmin/rhpamAdmin720
 
 ** Create Project
-*** *Step 1*: Create processes etc.
+*** *Step 1*: Create processes, rules etc.
 *** *Step 2*: since no CI-CD we will distribute KJARs directly from 'Business Central' into NEXUS to achieve this
-**** Add on any new project in the settings.xml the following for distribution to NEXUS (*Note: <id>nexus</id> MUST match the'<servers><server><id>nexus</id>' in *Infrastructure/templates/settings.xml*
+**** Add on any new project in the settings.xml (see 'setup_DEV_managed.sh' output log) the following for distribution to NEXUS (*Note: <id>nexus</id> MUST match the'<servers><server><id>nexus</id>' in *Infrastructure/templates/settings.xml*
 
 	 <distributionManagement>
 	   <repository>
 	     <id>nexus</id>
-	     <url>http://<NEXUS-ROUTE>/repository/maven-releases</url>
+	     <url>http://<NEXUS-ROUTE-URL>/repository/maven-releases</url>
 	   </repository>
 	   <snapshotRepository>
 	     <id>nexus</id>
-	     <url>http://<NEXUS-ROUTE>/repository/maven-snapshots</url>
+	     <url>http://<NEXUS-ROUTE-URL>/repository/maven-snapshots</url>
 	   </snapshotRepository>
 	 </distributionManagement>	
 
