@@ -241,7 +241,7 @@ image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instance
 												
 === PROD Project
 
-image:pics/RH-PAM-NoCICD-Flow.png[alt="Non-CICD RHPAM Setup with Internal DBs",width=1080, height=780]
+image:pics/RH-PAM-Flow-NoCICD-InternalDB.png[alt="Non-CICD RHPAM Setup with Internal DBs",width=1080, height=780]
 
 
 	cd ./ocp_pam_app_dev
@@ -406,15 +406,19 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 ==== Preparing RHPAM image For MariaDB, mariadb-driver-image
 
 * Change to subdirectory: *mariadb-driver-image*
-** #../build.sh [--registry=myregistry.example.com:5000] [--artifact-repo=https://myrepo.example.com/maven/public] [--image-tag=1.1 ]
+** Run the build #../build.sh [--registry=myregistry.example.com:5000] [--artifact-repo=https://myrepo.example.com/maven/public] [--image-tag=1.1 ]
 
-	cd ./resources/templates/contrib/jdbc/*mariadb-driver-image/
+	cd ./resources/templates/contrib/jdbc/mariadb-driver-image/
 	../build.sh --registry=docker-registry.default.svc:5000
 	...
 	--> Creating resources with label build=rhpam72-kieserver-mariadb-openshift ...
 	    imagestream.image.openshift.io "rhpam72-kieserver-mariadb-openshift" created
 	    buildconfig.build.openshift.io "rhpam72-kieserver-mariadb-openshift" created
 	--> Success
+
+*** Note to self: If user has no cluster-admin binding giving bindings is required, eg:
+
+	oc adm policy add-cluster-role-to-user cluster-admin developer --rolebinding-name=admin
 
 ** Check for the newly built RHPAM2 image/ImageStream *rhpam72-kieserver-mariadb-openshift* which contains *mariadb* database driver
 	# oc get is -n openshift |grep rhpam72-kieserver-mariadb-openshift
@@ -477,23 +481,76 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Single External DB",width=1080, height=780]
 
-	oc project pam-prod
-	oc create -f Infrastructure/templates/rhpam72-PROD-mariadb-stelios-1.yaml
-	./Infrastructure/scripts/setup_PROD_mariadb_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools
+* Pre-requisites
 
+** *Pre-Requisite-1*: The images have been built and are available, as follows:
 
+	# oc get is -n openshift |grep rhpam72-kieserver
+	rhpam72-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift            1.1                            29 hours ago
+	rhpam72-kieserver-openshift                    docker-registry.default.svc:5000/openshift/rhpam72-kieserver-openshift                    1.1,1.1-2,latest + 3 more...   3 days ago
+	rhpam72-kieserver-oracle-openshift             docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift             1.1                            28 hours ago
 
-==== Installing PROD with external ORacle (to be done on-site)
+** *Pre-Requisite-2*: A Database with the following settings to have been created
 
+	MariaDB [(none)]> CREATE DATABASE RHPAMOCP;
+	Query OK, 1 row affected (0.00 sec)
 
+	MariaDB [(none)]> CREATE USER 'rhpamocp'@'%' IDENTIFIED BY 'rhpamocp';
+	Query OK, 0 rows affected (0.00 sec)
+
+	MariaDB [(none)]> GRANT ALL PRIVILEGES ON RHPAMOCP.* TO 'rhpamocp'@'%' WITH GRANT OPTION;
+	Query OK, 0 rows affected (0.00 sec)
+
+* Initiate Installations
+
+	oc new-project pam-prod-mariadb
+	oc create -f Infrastructure/templates/rhpam72-prod-EXTERNAL-mariadb-stelios-1.yaml
+	./Infrastructure/scripts/setup_PROD_mariadb_managed.sh pam-prod-mariadb tools <MARIADB_HOST_NAME> <MARIADB_DB_NAME> <MARIADB_DB_USER> <MARIADB_DB_PWD>
+
+==== Installing PROD with external Oracle (to be done on-site)
+
+** *Pre-Requisite-1*: The images have been built and are available, as follows:
+
+	# oc get is -n openshift |grep rhpam72-kieserver
+	rhpam72-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift            1.1                            29 hours ago
+	rhpam72-kieserver-openshift                    docker-registry.default.svc:5000/openshift/rhpam72-kieserver-openshift                    1.1,1.1-2,latest + 3 more...   3 days ago
+	rhpam72-kieserver-oracle-openshift             docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift             1.1                            28 hours ago
+
+** *Pre-Requisite-2*: A Database with the following settings to have been created
+
+	oc new-project pam-prod-oracle
+	oc create -f Infrastructure/templates/rhpam72-prod-EXTERNAL-oracle-stelios-1.yaml
+	./Infrastructure/scripts/setup_PROD_oracle_managed.sh pam-prod-oracle tools <ORACLE_HOST_NAME> <ORACLE_DB_NAME> <ORACLE_DB_USER> <ORACLE_DB_PWD>
 
 === Setting & Utilizing Openshift Autoscaler
 	
+* Create an Horizontal Autoscaler for the *cgd-retail-kieserver-cluster-group-1* deployment to scale between one and five replicas and set it to scale up when the CPU utilization reaches *1%*.
+
+    oc autoscale dc/cgd-retail-kieserver-cluster-group-1 --min 1 --max 5 --cpu-percent=1
+
+**  It takes several minutes for the HPA to collect enough metrics to present a current status. 
+
+    In a separate window, create work for the pod and monitor the environment:
+
+    ROUTE=curl -u executionUser:executionUser123 -X POST "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers/morgages/processes/com.cgdretailprocesses.loanapproval/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
+
+    for time in {1..15000}
+      do
+       echo time $time
+       curl ${ROUTE}
+      done
+
+* Create an Horizontal Autoscaler for the *cgd-retail-kieserver-cluster-group-1* deployment to scale between one and five replicas and set it to scale up when the CPU utilization reaches *1%*.
+
+    oc autoscale dc/cgd-retail-kieserver-cluster-group-1 --min 1 --max 5 --cpu-percent=1
 
 
+    ROUTE=curl -u executionUser:executionUser123 -X POST "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers/morgages/processes/com.cgdretailprocesses.loanapproval/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
 
-
-
-
+    for time in {1..15000}
+      do
+       echo time $time
+       curl ${ROUTE}
+      done
 
 
