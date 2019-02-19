@@ -423,6 +423,7 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 	oc adm policy add-cluster-role-to-user cluster-admin developer --rolebinding-name=admin
 
 ** Check for the newly built RHPAM2 image/ImageStream *rhpam72-kieserver-mariadb-openshift* which contains *mariadb* database driver
+
 	# oc get is -n openshift |grep rhpam72-kieserver-mariadb-openshift
 	rhpam72-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift
 
