@@ -381,9 +381,11 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 === Installing PRODUCTION environment with SINGLE external Database Server for proceses
 
+==== Pre-Reqs
+
 * You have logged on to your project in the OpenShift environment using the oc command as a user with the *cluster-admin* role.
-* For Oracle DB driver can be found in this repository Link:https://github.com/skoussou/ocp_pam_app_dev/blob/master/Infrastructure/resources/drivers/oracle/com/oracle/ojdbc7/12.1.0.1/ojdbc7-12.1.0.1.jar[here]
-* For IBM DB2, Oracle Database, or Sybase, you have downloaded the JDBC driver from the database server vendor. More in Link:3.4. Building a custom Process Server image for an external database[documentation here]
+* For Oracle use the link:https://github.com/skoussou/ocp_pam_app_dev/blob/master/Infrastructure/resources/drivers/oracle/com/oracle/ojdbc7/12.1.0.1/ojdbc7-12.1.0.1.jar[DB driver] which can be found in this repository
+* For IBM DB2 or Sybase you have downloaded the JDBC driver from the database server vendor. More in link:https://access.redhat.com/documentation/en-us/red_hat_process_automation_manager/7.2/html-single/deploying_a_red_hat_process_automation_manager_managed_server_environment_on_red_hat_openshift_container_platform/#externaldb-build-proc[documentation here]
 * Install the source code for the custom build,
 
 	cd ./ocp_pam_app_dev

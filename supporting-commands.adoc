@@ -1,0 +1,16 @@
+= Minishift
+
+* SSH into minishift
+
+	minishift ssh
+
+* Check the folders from the host system minishift has mounted
+
+	minishift hostfolder list
+
+* Add *hostfolder* and mount it so that it is available in minishift (side note: this was so we can build images with mariadb and add ImageStream in to cluster, also for that neeeded oc tools)
+
+	minishift hostfolder add -t sshfs --source /home/stkousso/Stelios/Projects/0058-CGD/TASKS/ocp_pam_app_dev --target /mnt/sda1/ocp_pam_app_dev ocp_pam_app_dev
+	minishift hostfolder mount ocp_pam_app_dev
+ 	minishift hostfolder add -t sshfs --source /home/stkousso/Stelios/sw11/PAAS/Tooling/ocp-tools/3.11.16-linux/ --target /mnt/sda1/ocp-tools ocp-tools
+
