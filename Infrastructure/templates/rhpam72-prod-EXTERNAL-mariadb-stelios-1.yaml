@@ -1528,7 +1528,7 @@ objects:
             value: "true"
 ## External database settings BEGIN
           - name: KIE_SERVER_PERSISTENCE_DIALECT
-            value: ${KIE_SERVER_EXTERNALDB_DIALECT}"
+            value: ${KIE_SERVER_EXTERNALDB_DIALECT}
           - name: RHPAM_DATABASE
             value: "${KIE_SERVER_EXTERNALDB_DB}"
           - name: RHPAM_SERVICE_HOST
