@@ -493,7 +493,7 @@ image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Sing
 	rhpam72-kieserver-openshift                    docker-registry.default.svc:5000/openshift/rhpam72-kieserver-openshift                    1.1,1.1-2,latest + 3 more...   3 days ago
 	rhpam72-kieserver-oracle-openshift             docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift             1.1                            28 hours ago
 
-** *Pre-Requisite-2*: A Database with the following settings to have been created
+** *Pre-Requisite-2*: A Database with the following settings is in place
 
 	MariaDB [(none)]> CREATE DATABASE RHPAMOCP;
 	Query OK, 1 row affected (0.00 sec)
