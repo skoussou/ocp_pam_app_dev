@@ -75,15 +75,17 @@ Directions: https://access.redhat.com/solutions/3812291
 
 === Tools project
 
-	oc new-project <YOUR-TOOLS-NAEMSPACE>tools
-	
+	oc new-project tools
+
+Note: 'tools' is currently hard-coded and as such, this has to be the Project canonical name.
+
 1. create nexus + rh proxy repos
 
 		cd ./ocp_pam_app_dev
-		oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
+		oc login -u <CLUSTER PUBLIC URL> -u <USERNAME> -p <PASSWORD>
 		oc project tools
-		# oc create -f nexus-dc.yaml -n tools
-		./Infrastructure/scripts/setup_nexus.sh <YOUR-TOOLS-NAEMSPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
+		# oc create -f nexus.yaml -n tools
+		#./Infrastructure/scripts/setup_nexus.sh tools <CLUSTER PUBLIC URL>
 
 2. SSO Setp
 
