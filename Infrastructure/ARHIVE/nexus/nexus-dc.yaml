@@ -22,8 +22,8 @@ spec:
           command:
           - /bin/bash
           - -c
-          - export HTTP_PROXY=http://ya01578:rhCGD!POC01@10.11.18.11:8080; export
-            HTTPS_PROXY=http://ya01578:rhCGD!POC01@10.11.18.11:8080; export NO_PROXY=.cluster,.cluster.local,.grupocgd.com,.local,.svc,10.11.203.50,127.0.0.1,169.254.169.254,172.30.0.1,bpmconsole.grupocgd.com,ldc6001bpm01.grupocgd.com,ldc6001bpm02.grupocgd.com,ldc6001bpm03.grupocgd.com,ldc6001bpm05.grupocgd.com,ldc6001bpm06.grupocgd.com,localhost,172.30.0.0/16,10.128.0.0/14,ldc6001bpm01,,ldc6001bpm02,,ldc6001bpm03,,ldc6001bpm05,,ldc6001bpm06;
+          - export HTTP_PROXY=insert_your_proxy_here; export
+            HTTPS_PROXY=insert_your_proxy_here; export NO_PROXY=.cluster,.cluster.local,.grupocgd.com,.local,.svc,10.11.203.50,127.0.0.1,169.254.169.254,172.30.0.1,bpmconsole.grupocgd.com,ldc6001bpm01.grupocgd.com,ldc6001bpm02.grupocgd.com,ldc6001bpm03.grupocgd.com,ldc6001bpm05.grupocgd.com,ldc6001bpm06.grupocgd.com,localhost,172.30.0.0/16,10.128.0.0/14,ldc6001bpm01,,ldc6001bpm02,,ldc6001bpm03,,ldc6001bpm05,,ldc6001bpm06;
             curl -o /tmp/nexus-functions  https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/scripts/nexus-functions;
             ls -la /tmp; source /tmp/nexus-functions; add_nexus3_redhat_repos admin
             admin123 http://nexus:8081
