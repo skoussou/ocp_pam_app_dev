@@ -28,9 +28,9 @@ Directions: https://access.redhat.com/solutions/3812291
 
 	$ cd ./ocp_pam_app_dev
 	$ unzip ./resources/rhpam-7.2.0-openshift-templates.zip
-        $ oc get is -n openshift |grep rhpam
+	$ oc get is -n openshift |grep rhpam
 	$ oc create -f ./resources/rhpam72-image-streams.yaml -n openshift
-        $ oc get is -n openshift |grep rhpam
+	$ oc get is -n openshift |grep rhpam
 
 ==== Put RHPAM images in place
 
@@ -111,7 +111,7 @@ Directions: https://access.redhat.com/solutions/3812291
 ** Create Project
 *** *Step 1*: Create processes, rules etc.
 *** *Step 2*: since no CI-CD we will distribute KJARs directly from 'Business Central' into NEXUS to achieve this
-**** Add on any new project in the pom.xml (see 'setup_DEV_managed.sh' output log) the following for distribution to NEXUS (*Note: <id>nexus</id> MUST match the'<servers><server><id>nexus</id>' in *Infrastructure/templates/settings.xml*
+**** Add in the pom.xml of any new KJAR project created in Business central  (see 'setup_DEV_managed.sh' output log) the following for distribution to NEXUS (*Note: <id>nexus</id> MUST match the'<servers><server><id>nexus</id>' in *Infrastructure/templates/settings.xml*
 
 	 <distributionManagement>
 	   <repository>
