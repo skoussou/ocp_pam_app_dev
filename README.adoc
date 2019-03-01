@@ -7,15 +7,15 @@
 
 Directions: https://access.redhat.com/solutions/3812291
 
-	oc create secret generic imagestreamsecret --from-file=.dockerconfigjson=/home/stkousso/Stelios/sw11/PAAS/Distros/minishift/1.27/minishift-1.27.0-linux-amd64/config.json --type=kubernetes.io/dockerconfigjson
+	$ oc create secret generic imagestreamsecret --from-file=.dockerconfigjson=/home/stkousso/Stelios/sw11/PAAS/Distros/minishift/1.27/minishift-1.27.0-linux-amd64/config.json --type=kubernetes.io/dockerconfigjson
 
 === RHSSO
 
 * Installing link:https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_single_sign-on_for_openshift/#using_the_rh_sso_for_openshift_image_streams_and_application_templates[RHSSO 7.2] Templates & Images
 
-	oc login -u system:admin
-	cd ./ocp_pam_app_dev
-	./Infrastructure/scripts/prepare_env_sso.sh
+	$ oc login -u system:admin
+	$ cd ./ocp_pam_app_dev
+	$ ./Infrastructure/scripts/prepare_env_sso.sh
 
 === Nexus
 
@@ -26,42 +26,42 @@ Directions: https://access.redhat.com/solutions/3812291
 
 ==== Image Stream
 
-	cd ./ocp_pam_app_dev
-	unzip ./resources/rhpam-7.2.0-openshift-templates.zip
-        oc get is -n openshift |grep rhpam
-	oc create -f ./resources/rhpam72-image-streams.yaml -n openshift
-        oc get is -n openshift |grep rhpam
+	$ cd ./ocp_pam_app_dev
+	$ unzip ./resources/rhpam-7.2.0-openshift-templates.zip
+        $ oc get is -n openshift |grep rhpam
+	$ oc create -f ./resources/rhpam72-image-streams.yaml -n openshift
+        $ oc get is -n openshift |grep rhpam
 
 ==== Put RHPAM images in place
 
 * Check existing images (as cluster admin). we need rhpam72
 
-	oc get images |grep rhpam
+	$ oc get images |grep rhpam
 
 * *Business Central*: A platform for authoring business assets such as data objects, rules, processes, cases, and planning entities.
 
-	oc import-image my-rhpam-7/rhpam72-businesscentral-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-openshift --confirm -n openshift
+	$ oc import-image my-rhpam-7/rhpam72-businesscentral-openshift --all --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-openshift --confirm -n openshift
 
 * *KIE Server* REST services runtime environment for business assets such as business processes, rules, cases, and planning entities.
 
-	oc import-image my-rhpam-7/rhpam72-kieserver-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-kieserver-openshift --confirm -n openshift
+	$ oc import-image my-rhpam-7/rhpam72-kieserver-openshift --all --from=registry.access.redhat.com/rhpam-7/rhpam72-kieserver-openshift --confirm -n openshift
 
 * *KIE (Standalone) Controller*:  A component for managing multiple KIE Servers (Process, Decision, Planning) in manage mode.
 
-	oc import-image my-rhpam-7/rhpam72-controller-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-controller-openshift --confirm -n openshift
+	$ oc import-image my-rhpam-7/rhpam72-controller-openshift --all --from=registry.access.redhat.com/rhpam-7/rhpam72-controller-openshift --confirm -n openshift
 
 * *Smart Router*: Load balancing, unified view on available business assets, and aggregation of responses throughout multiple KIE Servers (Process, Decision, Planning).
 
-	oc import-image my-rhpam-7/rhpam72-smartrouter-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-smartrouter-openshift --confirm -n openshift
+	$ oc import-image my-rhpam-7/rhpam72-smartrouter-openshift --all --from=registry.access.redhat.com/rhpam-7/rhpam72-smartrouter-openshift --confirm -n openshift
 
 * *Business Central Monitoring*: A platform for monitoring and management of business assets.
 
-	oc import-image my-rhpam-7/rhpam72-businesscentral-monitoring-openshift --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-monitoring-openshift --confirm -n openshift
+	$ oc import-image my-rhpam-7/rhpam72-businesscentral-monitoring-openshift --all --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-monitoring-openshift --confirm -n openshift
 
 ==== Insert Templates
 
-	cd ./ocp_pam_app_dev
-	oc create -f ./resources/<template-name> -n openshift
+	$ cd ./ocp_pam_app_dev
+	$ oc create -f ./resources/<template-name> -n openshift
 
 ==== Custom Tempates
 
@@ -79,18 +79,16 @@ Directions: https://access.redhat.com/solutions/3812291
 	
 1. create nexus + rh proxy repos
 
-		cd ./ocp_pam_app_dev
-		oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
-		oc project tools
-		# oc create -f nexus-dc.yaml -n tools
-		./Infrastructure/scripts/setup_nexus.sh <YOUR-TOOLS-NAEMSPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
+		$ cd ./ocp_pam_app_dev
+		$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
+		$ oc project tools
+		$ ./Infrastructure/scripts/setup_nexus.sh <YOUR-TOOLS-NAEMSPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
 
 2. SSO Setp
 
-		oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
-		oc project tools
-		#oc new-app --template=openshift/sso72-x509-https -p APPLICATION_NAME=cgd-sso -p SSO_ADMIN_USERNAME=ssoadmin -p SSO_ADMIN_PASSWORD=ssoadmin720! -l app=sso -n tools
-		./Infrastructure/scripts/setup_sso.sh tools FALSE
+		$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
+		$ oc project tools
+		$ ./Infrastructure/scripts/setup_sso.sh tools FALSE
 		
 3. jenkins
 4. gogs
@@ -101,11 +99,11 @@ Directions: https://access.redhat.com/solutions/3812291
 
 * *Business Central* Installation/Configuration:
 
-	cd ./ocp_pam_app_dev
-	oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
-	oc project pam-dev
-	oc create -f Infrastructure/templates/rhpam72-authoring-stelios-1.yaml
-	./Infrastructure/scripts/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools
+	$ cd ./ocp_pam_app_dev
+	$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
+	$ oc project pam-dev
+	$ oc create -f Infrastructure/templates/rhpam72-authoring-stelios-1.yaml
+	$ ./Infrastructure/scripts/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools
 
 	KIE Server Check: "curl -u executionUser:executionUser123 --insecure https://secure-cgd-kieserver-<YOUR-DEV-NAMESPACE>.apps.<CLUSTER-NAME>/services/rest/server"
 	RHPAM Central Login: rhpamAdmin/rhpamAdmin720
@@ -113,7 +111,7 @@ Directions: https://access.redhat.com/solutions/3812291
 ** Create Project
 *** *Step 1*: Create processes, rules etc.
 *** *Step 2*: since no CI-CD we will distribute KJARs directly from 'Business Central' into NEXUS to achieve this
-**** Add on any new project in the settings.xml (see 'setup_DEV_managed.sh' output log) the following for distribution to NEXUS (*Note: <id>nexus</id> MUST match the'<servers><server><id>nexus</id>' in *Infrastructure/templates/settings.xml*
+**** Add on any new project in the pom.xml (see 'setup_DEV_managed.sh' output log) the following for distribution to NEXUS (*Note: <id>nexus</id> MUST match the'<servers><server><id>nexus</id>' in *Infrastructure/templates/settings.xml*
 
 	 <distributionManagement>
 	   <repository>
@@ -128,7 +126,7 @@ Directions: https://access.redhat.com/solutions/3812291
 
 **** 'Deploy' from 'Business Central' into the KieServer and confirm that KieContainer is started by looking for the appropriate *container-alias*
 
-	curl -u executionUser:executionUser123 -X GET "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers" --insecure -H  "accept: application/xml"
+	$ curl -u executionUser:executionUser123 -X GET "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers" --insecure -H  "accept: application/xml"
 
 	[RESPONSE]
 	----------------------------------
@@ -189,7 +187,7 @@ image:pics/kieserver-dev-kiecontainers-deployed.png["KieContainers active on DEV
 
 **** 'Find' the process in the deployed KJAR (ie. the runnalable RHPAM projet) by using from the previous result the alias or id of the KieContainer (container-alias="retail-proc-1" container-id="retail-proc-1_1.0.0")
 
-	curl -u executionUser:executionUser123 -X GET "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1/processes?page=0&pageSize=10&sortOrder=true" --insecure -H  "accept: application/xml"
+	$ curl -u executionUser:executionUser123 -X GET "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1/processes?page=0&pageSize=10&sortOrder=true" --insecure -H  "accept: application/xml"
 
 	[RESPONSE]
 	----------------------------------
@@ -208,7 +206,7 @@ image:pics/kieserver-dev-kiecontainers-deployed.png["KieContainers active on DEV
 **** 'Execute' against the KieContainer by starting a new process
 ***** Using the *alias* 
 
-	curl -u executionUser:executionUser123 --insecure -X POST "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1/processes/com.cgdretailprocesses.retail_proc_1.printname/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
+	$ curl -u executionUser:executionUser123 --insecure -X POST "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1/processes/com.cgdretailprocesses.retail_proc_1.printname/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
 
 	[RESPONSE]
 	----------------------------------
@@ -219,7 +217,7 @@ image:pics/kieserver-dev-kiecontainers-deployed.png["KieContainers active on DEV
 
 ***** Using the *container-id* 
 
-	curl -u executionUser:executionUser123 --insecure -X POST "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1_1.0.0/processes/com.cgdretailprocesses.retail_proc_1.printname/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
+	$ curl -u executionUser:executionUser123 --insecure -X POST "https://secure-cgd-kieserver-pam-dev.apps.fe44.example.opentlc.com/services/rest/server/containers/retail-proc-1_1.0.0/processes/com.cgdretailprocesses.retail_proc_1.printname/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
 
 	[RESPONSE]
 	----------------------------------
@@ -244,11 +242,11 @@ image:pics/ProcessInstances-Active-Completed.png["See KIESERVER Process Instance
 image:pics/RH-PAM-Flow-NoCICD-InternalDB.png[alt="Non-CICD RHPAM Setup with Internal DBs",width=1080, height=780]
 
 
-	cd ./ocp_pam_app_dev
-	oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
-	oc project pam-prod
-	oc create -f Infrastructure/templates/rhpam72-prod-stelios-1.yaml
-	./Infrastructure/scripts/setup_PROD_managed.sh <YOUR-DEV-NAMESPACE>pam-prod <YOUR-TOOLS-NAMESPACE>tools
+	$ cd ./ocp_pam_app_dev
+	$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
+	$ oc project pam-prod
+	$ oc create -f Infrastructure/templates/rhpam72-prod-stelios-1.yaml
+	$ ./Infrastructure/scripts/setup_PROD_managed.sh <YOUR-DEV-NAMESPACE>pam-prod <YOUR-TOOLS-NAMESPACE>tools
 
 ==== Resulting Installation
 
@@ -280,7 +278,7 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 * *Step 3*: Retrieve ALL Active KieContainers (ie. projects to execute processes against) using the *Smart Router* rather than individual KIESERVER cluster groups
 
-	# curl -u executionUser:executionUser123 -X GET "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers" -H  "accept: application/xml"
+	$ curl -u executionUser:executionUser123 -X GET "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers" -H  "accept: application/xml"
 
 	<?xml version="1.0" encoding="UTF-8"?>
 	<response msg="List of created containers" type="SUCCESS">    
@@ -327,7 +325,7 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 ** Retrieve Available processes in KieContainer
 
-	# curl -u executionUser:executionUser123 -X GET "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers/morgages/processes" -H  "accept: application/xml"
+	$ curl -u executionUser:executionUser123 -X GET "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers/morgages/processes" -H  "accept: application/xml"
 
 	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 	<process-definitions>
@@ -343,7 +341,7 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 ** Check the *Smart Router* configuration manually
 
-	oc rsh cgd-retail-smartrouter-1-7f2cw
+	$ oc rsh cgd-retail-smartrouter-1-7f2cw
 	$ cat /opt/rhpam-smartrouter/data/kie-server-router.json   
 	{
 	  "containerInfo": [{
@@ -361,7 +359,7 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 ** *Step 4*: Execute process *com.cgdretailprocesses.loanapproval* on KieContainer *morgages* and KIESERVERs *cgd-retail-kieserver-cluster-group-1* via the *Smart Router* configuration manually
 
-	curl -u executionUser:executionUser123 -X POST "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers/morgages/processes/com.cgdretailprocesses.loanapproval/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
+	$ curl -u executionUser:executionUser123 -X POST "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers/morgages/processes/com.cgdretailprocesses.loanapproval/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
 
 	[RESPONSE]
 	----------------------------------
@@ -373,7 +371,7 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 	Check the logs of the pod running the 'morgages' KieContainer
 	--------------------------------------------------------------
-	# oc logs -f cgd-retail-kieserver-cluster-group-1-1-wqsp
+	$ oc logs -f cgd-retail-kieserver-cluster-group-1-1-wqsp
 	10:27:27,105 INFO  [org.kie.server.services.impl.KieServerImpl] (default task-1) Container morgages (for release id com.cgdretailprocesses:mortgage-rules-1:1.0.0) successfully started
 	10:27:27,164 INFO  [org.kie.server.router.client.KieServerRouterEventListener] (default task-1) Added 'http://cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com:80/services/rest/server' as server location for container id 'morgages'
 	11:06:25,368 INFO  [stdout] (default task-1) LOAN APPROVED
@@ -388,12 +386,12 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 * For IBM DB2 or Sybase you have downloaded the JDBC driver from the database server vendor. More in link:https://access.redhat.com/documentation/en-us/red_hat_process_automation_manager/7.2/html-single/deploying_a_red_hat_process_automation_manager_managed_server_environment_on_red_hat_openshift_container_platform/#externaldb-build-proc[documentation here]
 * Install the source code for the custom build,
 
-	cd ./ocp_pam_app_dev
-	oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
-        oc project pam-prod
-	unzip ./resources/rhpam-7.2.0-openshift-templates.zip
-	cd ./resources/templates/contrib/jdbc
-	[root@bastion jdbc]# ll
+	$ cd ./ocp_pam_app_dev
+	$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
+        $ oc project pam-prod
+	$ unzip ./resources/rhpam-7.2.0-openshift-templates.zip
+	$ cd ./resources/templates/contrib/jdbc
+	$ ll
 	total 12
 	-rwxrwxr-x. 1 ec2-user ec2-user 3012 Jan 18 09:37 build.sh
 	drwxrwxr-x. 3 ec2-user ec2-user   65 Jan 18 09:37 db2-driver-image
@@ -410,7 +408,7 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 * Change to subdirectory: *mariadb-driver-image*
 ** Run the build #../build.sh [--registry=myregistry.example.com:5000] [--artifact-repo=https://myrepo.example.com/maven/public] [--image-tag=1.1 ]
 
-	cd ./resources/templates/contrib/jdbc/mariadb-driver-image/
+	$ cd ./resources/templates/contrib/jdbc/mariadb-driver-image/
 	../build.sh --registry=docker-registry.default.svc:5000
 	...
 	--> Creating resources with label build=rhpam72-kieserver-mariadb-openshift ...
@@ -420,14 +418,14 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 *** Note to self: If user has no cluster-admin binding giving bindings is required, eg:
 
-	oc adm policy add-cluster-role-to-user cluster-admin developer --rolebinding-name=admin
+	$ oc adm policy add-cluster-role-to-user cluster-admin developer --rolebinding-name=admin
 
 ** Check for the newly built RHPAM2 image/ImageStream *rhpam72-kieserver-mariadb-openshift* which contains *mariadb* database driver
 
-	# oc get is -n openshift |grep rhpam72-kieserver-mariadb-openshift
+	$ oc get is -n openshift |grep rhpam72-kieserver-mariadb-openshift
 	rhpam72-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift
 
-	# oc describe is rhpam72-kieserver-mariadb-openshift -n openshift
+	$ oc describe is rhpam72-kieserver-mariadb-openshift -n openshift
 	Name:                   rhpam72-kieserver-mariadb-openshift
 	Namespace:              openshift
 	Created:                4 minutes ago
@@ -448,7 +446,7 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 * Change to subdirectory: *oracle-driver-image*
 ** #../build.sh [--registry=myregistry.example.com:5000] [--artifact-repo=https://myrepo.example.com/maven/public] [--image-tag=1.1 ]
 
-	cd ./resources/templates/contrib/jdbc/oracle-driver-image/
+	$ cd ./resources/templates/contrib/jdbc/oracle-driver-image/
 	../build.sh --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/oracle" --registry=docker-registry.default.svc:5000
 	...
 	--> Creating resources with label build=rhpam72-kieserver-oracle-openshift ...
@@ -459,11 +457,11 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 
 ** Check for the newly built RHPAM2 image/ImageStream *rhpam72-kieserver-oracle-openshift* which contains *oracle* database driver
 
-	# oc get is rhpam72-kieserver-oracle-openshift -n openshift
+	$ oc get is rhpam72-kieserver-oracle-openshift -n openshift
 	NAME                                 DOCKER REPO                                                                     TAGS      UPDATED
 	rhpam72-kieserver-oracle-openshift   docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift   1.1       47 seconds ago
 
-	[root@master1 oracle-driver-image]# oc describe is rhpam72-kieserver-oracle-openshift -n openshift
+	$ oc describe is rhpam72-kieserver-oracle-openshift -n openshift
 	Name:                   rhpam72-kieserver-oracle-openshift
 	Namespace:              openshift
 	Created:                About a minute ago
@@ -488,7 +486,7 @@ image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Sing
 
 ** *Pre-Requisite-1*: The images have been built and are available, as follows:
 
-	# oc get is -n openshift |grep rhpam72-kieserver
+	$ oc get is -n openshift |grep rhpam72-kieserver
 	rhpam72-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift            1.1                            29 hours ago
 	rhpam72-kieserver-openshift                    docker-registry.default.svc:5000/openshift/rhpam72-kieserver-openshift                    1.1,1.1-2,latest + 3 more...   3 days ago
 	rhpam72-kieserver-oracle-openshift             docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift             1.1                            28 hours ago
@@ -514,22 +512,22 @@ image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Sing
 
 ** *Pre-Requisite-1*: The images have been built and are available, as follows:
 
-	# oc get is -n openshift |grep rhpam72-kieserver
+	$ oc get is -n openshift |grep rhpam72-kieserver
 	rhpam72-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift            1.1                            29 hours ago
 	rhpam72-kieserver-openshift                    docker-registry.default.svc:5000/openshift/rhpam72-kieserver-openshift                    1.1,1.1-2,latest + 3 more...   3 days ago
 	rhpam72-kieserver-oracle-openshift             docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift             1.1                            28 hours ago
 
 ** *Pre-Requisite-2*: A Database with the following settings to have been created
 
-	oc new-project pam-prod-oracle
-	oc create -f Infrastructure/templates/rhpam72-prod-EXTERNAL-oracle-stelios-1.yaml
+	$ oc new-project pam-prod-oracle
+	$ oc create -f Infrastructure/templates/rhpam72-prod-EXTERNAL-oracle-stelios-1.yaml
 	./Infrastructure/scripts/setup_PROD_oracle_managed.sh pam-prod-oracle tools <ORACLE_HOST_NAME> <ORACLE_DB_NAME> <ORACLE_DB_USER> <ORACLE_DB_PWD>
 
 === Setting & Utilizing Openshift Autoscaler
 	
 * Create an Horizontal Autoscaler for the *cgd-retail-kieserver-cluster-group-1* deployment to scale between one and five replicas and set it to scale up when the CPU utilization reaches *1%*.
 
-    oc autoscale dc/cgd-retail-kieserver-cluster-group-1 --min 1 --max 5 --cpu-percent=1
+    $ oc autoscale dc/cgd-retail-kieserver-cluster-group-1 --min 1 --max 5 --cpu-percent=1
 
 **  It takes several minutes for the HPA to collect enough metrics to present a current status. 
 
@@ -545,7 +543,7 @@ image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Sing
 
 * Create an Horizontal Autoscaler for the *cgd-retail-kieserver-cluster-group-1* deployment to scale between one and five replicas and set it to scale up when the CPU utilization reaches *1%*.
 
-    oc autoscale dc/cgd-retail-kieserver-cluster-group-1 --min 1 --max 5 --cpu-percent=1
+    $ oc autoscale dc/cgd-retail-kieserver-cluster-group-1 --min 1 --max 5 --cpu-percent=1
 
 
     ROUTE=curl -u executionUser:executionUser123 -X POST "http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/containers/morgages/processes/com.cgdretailprocesses.loanapproval/instances" -H  "accept: application/xml" -H  "content-type: application/xml" -d "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><map-type>    <entries>        <entry>            <key>age</key>            <value xsi:type=\"xs:int\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"                    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">25</value>        </entry>        <entry>            <key>person</key>            <value xsi:type=\"person\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">                <name>john</name>            </value>        </entry>    </entries></map-type>"
