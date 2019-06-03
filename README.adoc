@@ -246,7 +246,7 @@ image:pics/RH-PAM-Flow-NoCICD-InternalDB.png[alt="Non-CICD RHPAM Setup with Inte
 	$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 	$ oc project pam-prod
 	$ oc create -f Infrastructure/templates/rhpam73-prod-stelios-1.yaml
-	$ ./Infrastructure/scripts73/setup_PROD_managed.sh <YOUR-DEV-NAMESPACE>pam-prod <YOUR-TOOLS-NAMESPACE>tools
+	$ ./Infrastructure/scripts73/setup_PROD_managed.sh <YOUR-DEV-NAMESPACE>pam-prod <YOUR-TOOLS-NAMESPACE>tools APP_NAME <ENV [QA,SIT,UAT,PRE-PROD,PROD]>
 
 ==== Resulting Installation
 
@@ -506,7 +506,7 @@ image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Sing
 
 	oc new-project pam-prod-mariadb
 	oc create -f Infrastructure/templates/rhpam73-prod-EXTERNAL-mariadb-stelios-1.yaml
-	./Infrastructure/scripts73/setup_PROD_mariadb_managed.sh pam-prod-mariadb tools <MARIADB_HOST_NAME> <MARIADB_DB_NAME> <MARIADB_DB_USER> <MARIADB_DB_PWD>
+	./Infrastructure/scripts73/setup_PROD_mariadb_managed.sh pam-prod-mariadb tools <APP_NAME> <MARIADB_HOST_NAME> <MARIADB_DB_NAME> <MARIADB_DB_USER> <MARIADB_DB_PWD>  <ENV [QA,SIT,UAT,PRE-PROD,PROD]>
 
 ==== Installing PROD with external Oracle (to be done on-site)
 
@@ -521,7 +521,7 @@ image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Sing
 
 	$ oc new-project pam-prod-oracle
 	$ oc create -f Infrastructure/templates/rhpam73-prod-EXTERNAL-oracle-stelios-1.yaml
-	./Infrastructure/scripts73/setup_PROD_oracle_managed.sh pam-prod-oracle tools <ORACLE_HOST_NAME> <ORACLE_DB_NAME> <ORACLE_DB_USER> <ORACLE_DB_PWD>
+	./Infrastructure/scripts73/setup_PROD_oracle_managed.sh pam-prod-oracle tools <APP_NAME> <ORACLE_HOST_NAME> <ORACLE_DB_NAME> <ORACLE_DB_USER> <ORACLE_DB_PWD> <ENV [QA,SIT,UAT,PRE-PROD,PROD]>
 
 === Setting & Utilizing Openshift Autoscaler
 	
