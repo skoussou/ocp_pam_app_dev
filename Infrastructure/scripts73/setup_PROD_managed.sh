@@ -2,13 +2,14 @@
 # Setup PRODUCTION Project
 if [ "$#" -ne 3 ]; then
     echo "Usage:"
-    echo "  $0 PROD_NAMESPACE TOOLS_NAMESPACE"
+    echo "  $0 PROD_NAMESPACE TOOLS_NAMESPACE APP_NAME ENV [QA, SIT, UAT, PRE-PROD, PROD]"
     exit 1
 fi
 
 PROD_NAMESPACE=$1
 TOOLS_NAMESPACE=$2
 APP_NAME=$3
+ENV=$4
 echo "Setting up RH PAM PRODUCTION Environment in project ${PROD_NAMESPACE}"
 
 
@@ -78,7 +79,7 @@ echo "               cd /opt/eap/bin"
 echo "               ./add-user.sh -a -u <user-name> -p <password> -g kie-server,rest-all,<YOUR ROLE from Business Process>"
 echo "#################################################################################################"
 echo ""
-oc new-app --template=rhpam73-prod-stelios-1  -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret  -p APPLICATION_NAME=${APP_NAME} -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral  -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass  -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks  -p KIE_SERVER_HTTPS_NAME=kieserver  -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass   -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks  -p KIE_ADMIN_USER=rhpamadmin   -p KIE_ADMIN_PWD=rhpamadmin730   -p KIE_SERVER_USER=executionUser   -p KIE_SERVER_PWD=executionUser123   -p KIE_SERVER_CONTROLLER_USER=controllerUser   -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 -p MAVEN_REPO_URL=${NEXUS_ROUTE_URL}/maven-public  -p MAVEN_REPO_USERNAME=admin  -p MAVEN_REPO_PASSWORD=admin123  -p MAVEN_REPO_ID=maven-public -p SMART_ROUTER_CONTAINER_REPLICAS=1 -p KIE_SERVER_CONTAINER_REPLICAS=1 -l app=${APP_NAME}-pamprod -n ${PROD_NAMESPACE}
+oc new-app --template=rhpam73-prod-stelios-1  -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret  -p APPLICATION_NAME=${APP_NAME} -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral  -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass  -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks  -p KIE_SERVER_HTTPS_NAME=kieserver  -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass   -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks  -p KIE_ADMIN_USER=rhpamadmin   -p KIE_ADMIN_PWD=rhpamadmin730   -p KIE_SERVER_USER=executionUser   -p KIE_SERVER_PWD=executionUser123   -p KIE_SERVER_CONTROLLER_USER=controllerUser   -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 -p MAVEN_REPO_URL=${NEXUS_ROUTE_URL}/maven-public  -p MAVEN_REPO_USERNAME=admin  -p MAVEN_REPO_PASSWORD=admin123  -p MAVEN_REPO_ID=maven-public -p SMART_ROUTER_CONTAINER_REPLICAS=1 -p KIE_SERVER_CONTAINER_REPLICAS=1 -l app=${APP_NAME}-pam-${ENV} -n ${PROD_NAMESPACE}
 
 echo ""
 echo ""
