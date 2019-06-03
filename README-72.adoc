@@ -11,11 +11,11 @@ Directions: https://access.redhat.com/solutions/3812291
 
 === RHSSO
 
-* Installing link:https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_single_sign-on_for_openshift/#using_the_rh_sso_for_openshift_image_streams_and_application_templates[RHSSO 7.3] Templates & Images
+* Installing link:https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_single_sign-on_for_openshift/#using_the_rh_sso_for_openshift_image_streams_and_application_templates[RHSSO 7.2] Templates & Images
 
 	$ oc login -u system:admin
 	$ cd ./ocp_pam_app_dev
-	$ ./Infrastructure/scripts73/prepare_env_sso.sh
+	$ ./Infrastructure/scripts/prepare_env_sso.sh
 
 === Nexus
 
@@ -34,29 +34,29 @@ Directions: https://access.redhat.com/solutions/3812291
 
 ==== Put RHPAM images in place
 
-* Check existing images (as cluster admin). we need rhpam73
+* Check existing images (as cluster admin). we need rhpam72
 
 	$ oc get images |grep rhpam
 
 * *Business Central*: A platform for authoring business assets such as data objects, rules, processes, cases, and planning entities.
 
-	$ oc import-image my-rhpam-7/rhpam73-businesscentral-openshift --all --from=registry.redhat.io/rhpam-7/rhpam73-businesscentral-openshift --confirm -n openshift
+	$ oc import-image my-rhpam-7/rhpam72-businesscentral-openshift --all --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-openshift --confirm -n openshift
 
 * *KIE Server* REST services runtime environment for business assets such as business processes, rules, cases, and planning entities.
 
-	$ oc import-image my-rhpam-7/rhpam73-kieserver-openshift --all --from=registry.redhat.io/rhpam-7/rhpam73-kieserver-openshift --confirm -n openshift
+	$ oc import-image my-rhpam-7/rhpam72-kieserver-openshift --all --from=registry.access.redhat.com/rhpam-7/rhpam72-kieserver-openshift --confirm -n openshift
 
 * *KIE (Standalone) Controller*:  A component for managing multiple KIE Servers (Process, Decision, Planning) in manage mode.
 
-	$ oc import-image my-rhpam-7/rhpam73-controller-openshift --all --from=registry.redhat.io/rhpam-7/rhpam73-controller-openshift --confirm -n openshift
+	$ oc import-image my-rhpam-7/rhpam72-controller-openshift --all --from=registry.access.redhat.com/rhpam-7/rhpam72-controller-openshift --confirm -n openshift
 
 * *Smart Router*: Load balancing, unified view on available business assets, and aggregation of responses throughout multiple KIE Servers (Process, Decision, Planning).
 
-	$ oc import-image my-rhpam-7/rhpam73-smartrouter-openshift --all --from=registry.redhat.io/rhpam-7/rhpam73-smartrouter-openshift --confirm -n openshift
+	$ oc import-image my-rhpam-7/rhpam72-smartrouter-openshift --all --from=registry.access.redhat.com/rhpam-7/rhpam72-smartrouter-openshift --confirm -n openshift
 
 * *Business Central Monitoring*: A platform for monitoring and management of business assets.
 
-	$ oc import-image my-rhpam-7/rhpam73-businesscentral-monitoring-openshift --all --from=registry.redhat.io/rhpam-7/rhpam73-businesscentral-monitoring-openshift --confirm -n openshift
+	$ oc import-image my-rhpam-7/rhpam72-businesscentral-monitoring-openshift --all --from=registry.access.redhat.com/rhpam-7/rhpam72-businesscentral-monitoring-openshift --confirm -n openshift
 
 ==== Insert Templates
 
@@ -82,13 +82,13 @@ Directions: https://access.redhat.com/solutions/3812291
 		$ cd ./ocp_pam_app_dev
 		$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 		$ oc project tools
-		$ ./Infrastructure/scripts73/setup_nexus.sh <YOUR-TOOLS-NAEMSPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
+		$ ./Infrastructure/scripts/setup_nexus.sh <YOUR-TOOLS-NAEMSPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
 
 2. SSO Setp
 
 		$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 		$ oc project tools
-		$ ./Infrastructure/scripts73/setup_sso.sh tools FALSE
+		$ ./Infrastructure/scripts/setup_sso.sh tools FALSE
 		
 3. jenkins
 4. gogs
@@ -102,8 +102,8 @@ Directions: https://access.redhat.com/solutions/3812291
 	$ cd ./ocp_pam_app_dev
 	$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 	$ oc project pam-dev
-	$ oc create -f Infrastructure/templates/rhpam73-authoring-stelios-1.yaml
-	$ ./Infrastructure/scripts73/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools
+	$ oc create -f Infrastructure/templates/rhpam72-authoring-stelios-1.yaml
+	$ ./Infrastructure/scripts/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools
 
 	KIE Server Check: "curl -u executionUser:executionUser123 --insecure https://secure-cgd-kieserver-<YOUR-DEV-NAMESPACE>.apps.<CLUSTER-NAME>/services/rest/server"
 	RHPAM Central Login: rhpamAdmin/rhpamAdmin720
@@ -245,8 +245,8 @@ image:pics/RH-PAM-Flow-NoCICD-InternalDB.png[alt="Non-CICD RHPAM Setup with Inte
 	$ cd ./ocp_pam_app_dev
 	$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 	$ oc project pam-prod
-	$ oc create -f Infrastructure/templates/rhpam73-prod-stelios-1.yaml
-	$ ./Infrastructure/scripts73/setup_PROD_managed.sh <YOUR-DEV-NAMESPACE>pam-prod <YOUR-TOOLS-NAMESPACE>tools
+	$ oc create -f Infrastructure/templates/rhpam72-prod-stelios-1.yaml
+	$ ./Infrastructure/scripts/setup_PROD_managed.sh <YOUR-DEV-NAMESPACE>pam-prod <YOUR-TOOLS-NAMESPACE>tools
 
 ==== Resulting Installation
 
@@ -411,33 +411,33 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 	$ cd ./resources/templates/contrib/jdbc/mariadb-driver-image/
 	../build.sh --registry=docker-registry.default.svc:5000
 	...
-	--> Creating resources with label build=rhpam73-kieserver-mariadb-openshift ...
-	    imagestream.image.openshift.io "rhpam73-kieserver-mariadb-openshift" created
-	    buildconfig.build.openshift.io "rhpam73-kieserver-mariadb-openshift" created
+	--> Creating resources with label build=rhpam72-kieserver-mariadb-openshift ...
+	    imagestream.image.openshift.io "rhpam72-kieserver-mariadb-openshift" created
+	    buildconfig.build.openshift.io "rhpam72-kieserver-mariadb-openshift" created
 	--> Success
 
 *** Note to self: If user has no cluster-admin binding giving bindings is required, eg:
 
 	$ oc adm policy add-cluster-role-to-user cluster-admin developer --rolebinding-name=admin
 
-** Check for the newly built RHPAM2 image/ImageStream *rhpam73-kieserver-mariadb-openshift* which contains *mariadb* database driver
+** Check for the newly built RHPAM2 image/ImageStream *rhpam72-kieserver-mariadb-openshift* which contains *mariadb* database driver
 
-	$ oc get is -n openshift |grep rhpam73-kieserver-mariadb-openshift
-	rhpam73-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam73-kieserver-mariadb-openshift
+	$ oc get is -n openshift |grep rhpam72-kieserver-mariadb-openshift
+	rhpam72-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift
 
-	$ oc describe is rhpam73-kieserver-mariadb-openshift -n openshift
-	Name:                   rhpam73-kieserver-mariadb-openshift
+	$ oc describe is rhpam72-kieserver-mariadb-openshift -n openshift
+	Name:                   rhpam72-kieserver-mariadb-openshift
 	Namespace:              openshift
 	Created:                4 minutes ago
-	Labels:                 build=rhpam73-kieserver-mariadb-openshift
+	Labels:                 build=rhpam72-kieserver-mariadb-openshift
 	Annotations:            openshift.io/generated-by=OpenShiftNewBuild
-	Docker Pull Spec:       docker-registry.default.svc:5000/openshift/rhpam73-kieserver-mariadb-openshift
+	Docker Pull Spec:       docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift
 	Image Lookup:           local=false
 	Unique Images:          1
 	Tags:                   1
 	1.1
 	  no spec tag
-	  * docker-registry.default.svc:5000/openshift/rhpam73-kieserver-mariadb-openshift@sha256:6d330a9aa901c47e9937ed16732d46ceb000ae20a73afdb8b952d6249d5abdaf
+	  * docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift@sha256:6d330a9aa901c47e9937ed16732d46ceb000ae20a73afdb8b952d6249d5abdaf
 	      About a minute ago
 
 
@@ -449,31 +449,31 @@ image:pics/Deployed-Started-KieContainer.png["RHPAMCentral Monitor",height=280]
 	$ cd ./resources/templates/contrib/jdbc/oracle-driver-image/
 	../build.sh --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/oracle" --registry=docker-registry.default.svc:5000
 	...
-	--> Creating resources with label build=rhpam73-kieserver-oracle-openshift ...
-	    imagestream.image.openshift.io "rhpam73-kieserver-oracle-openshift" created
-	    buildconfig.build.openshift.io "rhpam73-kieserver-oracle-openshift" created
+	--> Creating resources with label build=rhpam72-kieserver-oracle-openshift ...
+	    imagestream.image.openshift.io "rhpam72-kieserver-oracle-openshift" created
+	    buildconfig.build.openshift.io "rhpam72-kieserver-oracle-openshift" created
 	--> Success
 
 
-** Check for the newly built RHPAM2 image/ImageStream *rhpam73-kieserver-oracle-openshift* which contains *oracle* database driver
+** Check for the newly built RHPAM2 image/ImageStream *rhpam72-kieserver-oracle-openshift* which contains *oracle* database driver
 
-	$ oc get is rhpam73-kieserver-oracle-openshift -n openshift
+	$ oc get is rhpam72-kieserver-oracle-openshift -n openshift
 	NAME                                 DOCKER REPO                                                                     TAGS      UPDATED
-	rhpam73-kieserver-oracle-openshift   docker-registry.default.svc:5000/openshift/rhpam73-kieserver-oracle-openshift   1.1       47 seconds ago
+	rhpam72-kieserver-oracle-openshift   docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift   1.1       47 seconds ago
 
-	$ oc describe is rhpam73-kieserver-oracle-openshift -n openshift
-	Name:                   rhpam73-kieserver-oracle-openshift
+	$ oc describe is rhpam72-kieserver-oracle-openshift -n openshift
+	Name:                   rhpam72-kieserver-oracle-openshift
 	Namespace:              openshift
 	Created:                About a minute ago
-	Labels:                 build=rhpam73-kieserver-oracle-openshift
+	Labels:                 build=rhpam72-kieserver-oracle-openshift
 	Annotations:            openshift.io/generated-by=OpenShiftNewBuild
-	Docker Pull Spec:       docker-registry.default.svc:5000/openshift/rhpam73-kieserver-oracle-openshift
+	Docker Pull Spec:       docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift
 	Image Lookup:           local=false
 	Unique Images:          1
 	Tags:                   1
 	1.1
 	  no spec tag
-	  * docker-registry.default.svc:5000/openshift/rhpam73-kieserver-oracle-openshift@sha256:e0720bec08445941b2944914f967433c2e093d54bad353c74de1082f289ba954
+	  * docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift@sha256:e0720bec08445941b2944914f967433c2e093d54bad353c74de1082f289ba954
 	      About a minute ago
 
 
@@ -486,10 +486,10 @@ image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Sing
 
 ** *Pre-Requisite-1*: The images have been built and are available, as follows:
 
-	$ oc get is -n openshift |grep rhpam73-kieserver
-	rhpam73-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam73-kieserver-mariadb-openshift            1.1                            29 hours ago
-	rhpam73-kieserver-openshift                    docker-registry.default.svc:5000/openshift/rhpam73-kieserver-openshift                    1.1,1.1-2,latest + 3 more...   3 days ago
-	rhpam73-kieserver-oracle-openshift             docker-registry.default.svc:5000/openshift/rhpam73-kieserver-oracle-openshift             1.1                            28 hours ago
+	$ oc get is -n openshift |grep rhpam72-kieserver
+	rhpam72-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift            1.1                            29 hours ago
+	rhpam72-kieserver-openshift                    docker-registry.default.svc:5000/openshift/rhpam72-kieserver-openshift                    1.1,1.1-2,latest + 3 more...   3 days ago
+	rhpam72-kieserver-oracle-openshift             docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift             1.1                            28 hours ago
 
 ** *Pre-Requisite-2*: A Database with the following settings is in place
 
@@ -505,23 +505,23 @@ image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Sing
 * Initiate Installations
 
 	oc new-project pam-prod-mariadb
-	oc create -f Infrastructure/templates/rhpam73-prod-EXTERNAL-mariadb-stelios-1.yaml
-	./Infrastructure/scripts73/setup_PROD_mariadb_managed.sh pam-prod-mariadb tools <MARIADB_HOST_NAME> <MARIADB_DB_NAME> <MARIADB_DB_USER> <MARIADB_DB_PWD>
+	oc create -f Infrastructure/templates/rhpam72-prod-EXTERNAL-mariadb-stelios-1.yaml
+	./Infrastructure/scripts/setup_PROD_mariadb_managed.sh pam-prod-mariadb tools <MARIADB_HOST_NAME> <MARIADB_DB_NAME> <MARIADB_DB_USER> <MARIADB_DB_PWD>
 
 ==== Installing PROD with external Oracle (to be done on-site)
 
 ** *Pre-Requisite-1*: The images have been built and are available, as follows:
 
-	$ oc get is -n openshift |grep rhpam73-kieserver
-	rhpam73-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam73-kieserver-mariadb-openshift            1.1                            29 hours ago
-	rhpam73-kieserver-openshift                    docker-registry.default.svc:5000/openshift/rhpam73-kieserver-openshift                    1.1,1.1-2,latest + 3 more...   3 days ago
-	rhpam73-kieserver-oracle-openshift             docker-registry.default.svc:5000/openshift/rhpam73-kieserver-oracle-openshift             1.1                            28 hours ago
+	$ oc get is -n openshift |grep rhpam72-kieserver
+	rhpam72-kieserver-mariadb-openshift            docker-registry.default.svc:5000/openshift/rhpam72-kieserver-mariadb-openshift            1.1                            29 hours ago
+	rhpam72-kieserver-openshift                    docker-registry.default.svc:5000/openshift/rhpam72-kieserver-openshift                    1.1,1.1-2,latest + 3 more...   3 days ago
+	rhpam72-kieserver-oracle-openshift             docker-registry.default.svc:5000/openshift/rhpam72-kieserver-oracle-openshift             1.1                            28 hours ago
 
 ** *Pre-Requisite-2*: A Database with the following settings to have been created
 
 	$ oc new-project pam-prod-oracle
-	$ oc create -f Infrastructure/templates/rhpam73-prod-EXTERNAL-oracle-stelios-1.yaml
-	./Infrastructure/scripts73/setup_PROD_oracle_managed.sh pam-prod-oracle tools <ORACLE_HOST_NAME> <ORACLE_DB_NAME> <ORACLE_DB_USER> <ORACLE_DB_PWD>
+	$ oc create -f Infrastructure/templates/rhpam72-prod-EXTERNAL-oracle-stelios-1.yaml
+	./Infrastructure/scripts/setup_PROD_oracle_managed.sh pam-prod-oracle tools <ORACLE_HOST_NAME> <ORACLE_DB_NAME> <ORACLE_DB_USER> <ORACLE_DB_PWD>
 
 === Setting & Utilizing Openshift Autoscaler
 	
