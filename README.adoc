@@ -105,10 +105,10 @@ Directions:
 	$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 	$ oc project pam-dev
 	$ oc create -f Infrastructure/templates/rhpam73-authoring-stelios-1.yaml
-	$ ./Infrastructure/scripts73/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools
+	$ ./Infrastructure/scripts73/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
 
 	KIE Server Check: "curl -u executionUser:executionUser123 --insecure https://secure-cgd-kieserver-<YOUR-DEV-NAMESPACE>.apps.<CLUSTER-NAME>/services/rest/server"
-	RHPAM Central Login: rhpamAdmin/rhpamAdmin720
+	RHPAM Central Login: rhpamAdmin/rhpamAdmin730
 
 ** Create Project
 *** *Step 1*: Create processes, rules etc.
@@ -252,7 +252,7 @@ image:pics/RH-PAM-Flow-NoCICD-InternalDB.png[alt="Non-CICD RHPAM Setup with Inte
 
 ==== Resulting Installation
 
-- *Business Central Monitor*: https://secure-cgd-retail-rhpamcentrmon-pam-prod.apps.fe44.example.opentlc.com/ (rhpamAdmin/rhpamAdmin720, used to deploy KJAR projects, manage KJAR and template configurations, monitor)
+- *Business Central Monitor*: https://secure-cgd-retail-rhpamcentrmon-pam-prod.apps.fe44.example.opentlc.com/ (rhpamAdmin/rhpamAdmin730, used to deploy KJAR projects, manage KJAR and template configurations, monitor)
 - *Smart Router*: http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/ (Service used as smart proxy of processes on any connected KIESERVER cluster group)
 - *KIE Server Cluster Group-1*: https://secure-cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com/docs
 - *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1* (Runs a KJAR(s) related to a division and has dedicated Database)

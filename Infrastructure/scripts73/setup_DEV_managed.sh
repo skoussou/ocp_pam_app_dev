@@ -2,13 +2,14 @@
 # Setup Development Project
 if [ "$#" -ne 3 ]; then
     echo "Usage:"
-    echo "  $0 DEV_NAMESPACE TOOLS_NAMESPACE APP_NAME"
+    echo "  $0 DEV_NAMESPACE TOOLS_NAMESPACE APP_NAME CLUSTER"
     exit 1
 fi
 
 DEV_NAMESPACE=$1
 TOOLS_NAMESPACE=$2
 APP_NAME=$3
+CLUSTER=$4
 echo "Setting up RH PAM Development Environment in project ${DEV_NAMESPACE}"
 
 
@@ -76,7 +77,8 @@ echo "               cd /opt/eap/bin"
 echo "               ./add-user.sh -a -u <user-name> -p <password> -g kie-server,rest-all,<YOUR ROLE from Business Process>"
 echo "#################################################################################################"
 echo ""
-oc new-app --template=stelios-1-rhpam73-authoring -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret -p APPLICATION_NAME=${APP_NAME} -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks -p KIE_SERVER_HTTPS_NAME=kieserver -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks -p KIE_ADMIN_USER=rhpamadmin -p KIE_ADMIN_PWD=rhpamadmin730 -p KIE_SERVER_USER=executionUser -p KIE_SERVER_PWD=executionUser123 -p KIE_SERVER_CONTROLLER_USER=controllerUser -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 -p MAVEN_REPO_URL=${NEXUS_ROUTE_URL}/maven-public -p MAVEN_REPO_USERNAME=admin -p MAVEN_REPO_PASSWORD=admin123 -p MAVEN_REPO_ID=maven-public  -l app=${APP_NAME}-pamdev -n ${DEV_NAMESPACE}
+
+oc new-app --template=stelios-1-rhpam73-authoring -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret -p APPLICATION_NAME=${APP_NAME} -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks -p KIE_SERVER_HTTPS_NAME=kieserver -p KIE_SERVER_HOSTNAME_HTTP="${APP_NAME}-${DEV_NAMESPACE}.${CLUSTER}" -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks -p KIE_ADMIN_USER=rhpamadmin -p KIE_ADMIN_PWD=rhpamadmin730 -p KIE_SERVER_USER=executionUser -p KIE_SERVER_PWD=executionUser123 -p KIE_SERVER_CONTROLLER_USER=controllerUser -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 -p MAVEN_REPO_URL=${NEXUS_ROUTE_URL}/maven-public -p MAVEN_REPO_USERNAME=admin -p MAVEN_REPO_PASSWORD=admin123 -p MAVEN_REPO_ID=maven-public  -l app=${APP_NAME}-pamdev -n ${DEV_NAMESPACE}
 
 echo ""
 echo ""
