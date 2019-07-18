@@ -402,6 +402,10 @@ parameters:
   description: Whether to add to the current roles, or replace the current roles with the mapped ones. Replaces if set to true.
   name: AUTH_ROLE_MAPPER_REPLACE_ROLE
   required: false
+- displayName: RoleMapping rolesProperties file path
+  description: When present, the RoleMapping Login Module will be configured to use the provided file. This property defines the fully-qualified file path and name of a properties file or resource which maps roles to replacement roles. The format is original_role=role1,role2,role3
+  name: AUTH_ROLE_MAPPER_ROLES_PROPERTIES
+  required: false
 objects:
 - kind: ServiceAccount
   apiVersion: v1
