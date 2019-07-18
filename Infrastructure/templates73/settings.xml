@@ -14,9 +14,9 @@
   </mirrors>
   <servers>
     <server>
-      <id>nexus</id>
-      <username>nexus-maven</username>
-      <password>Telkom123</password>
+      <id>Nexus</id>
+      <username>admin</username>
+      <password>admin123</password>
     </server>
   </servers>
 
