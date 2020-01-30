@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<settings>
+
+  <mirrors>
+    <mirror>
+      <id>Nexus</id>
+      <name>Nexus Public Mirror</name>
+      <!--url>http://nexus3-dsk-nexus.apps.na39.openshift.opentlc.com/repository/maven-all-public/</url-->
+      <!--url>http://nexus3-GUID-nexus.svc.cluster.local:8081/repository/maven-all-public/</url-->
+      <!--url>http://nexus3-tools.192.168.42.21.nip.io/repository/maven-all-public/</url-->
+      <url>http://nexus-cicd-rhpam.apps.labs-aws-430c.sandbox1287.opentlc.com/repository/maven-all-public/</url>
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+  </mirrors>
+  <servers>
+    <server>
+      <id>Nexus</id>
+      <username>admin</username>
+      <password>admin123</password>
+    </server>
+  </servers>
+
+  <profiles>
+    <!-- Configure the JBoss GA Maven repository -->
+    <profile>
+      <id>maven-all-public</id>
+      <repositories>
+        <repository>
+          <id>maven-all-public</id>
+          <url>http://nexus-cicd-rhpam.apps.labs-aws-430c.sandbox1287.opentlc.com/repository/maven-all-public/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>maven-all-public</id>
+          <url>http://nexus-cicd-rhpam.apps.labs-aws-430c.sandbox1287.opentlc.com/repository/maven-all-public/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <!-- Optionally, make the repository active by default -->
+    <activeProfile>maven-all-public</activeProfile>
+  </activeProfiles>
+
+
+</settings>

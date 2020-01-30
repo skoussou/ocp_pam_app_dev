@@ -11,6 +11,8 @@ Directions:
 
 	$ oc create secret generic imagestreamsecret --from-file=.dockerconfigjson=/home/stkousso/Stelios/sw11/PAAS/Distros/minishift/1.27/minishift-1.27.0-linux-amd64/config.json --type=kubernetes.io/dockerconfigjson
 
+        $ oc create secret generic imagestreamsecret --from-file=.dockerconfigjson=/home/stkousso/.docker/config.json --type=kubernetes.io/dockerconfigjson
+
 === RHSSO
 
 * Installing link:https://access.redhat.com/documentation/en-us/red_hat_jboss_middleware_for_openshift/3/html-single/red_hat_single_sign-on_for_openshift/#using_the_rh_sso_for_openshift_image_streams_and_application_templates[RHSSO 7.3] Templates & Images
@@ -23,18 +25,28 @@ Directions:
 
 * No special prep required if access to external Red Hat Maven repositories is possible and 
 * The NEXUS image 'docker.io/sonatype/nexus3' is possible to download
+* Consider this GIT Repo for the setup of the tooling https://github.com/erkerc/openshift-cd-demo.git
 
 === RHPAM
 
 ==== Image Stream
 
 	$ cd ./ocp_pam_app_dev
-	$ unzip ./resources/rhpam-7.2.0-openshift-templates.zip
+	$ unzip ./resources/rhpam-7.6.0-openshift-templates.zip
 	$ oc get is -n openshift |grep rhpam
-	$ oc create -f ./resources/rhpam72-image-streams.yaml -n openshift
+	$ oc create -f ./resources/rhpam76-image-streams.yaml -n openshift
+	$ oc create -f ./resources/extension-image-streams.yaml -n openshift
 	$ oc get is -n openshift |grep rhpam
 
 ==== Put RHPAM images in place
+
+
+rhpam-businesscentral-monitoring-rhel8           image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-businesscentral-monitoring-rhel8   7.6.0           4 hours ago
+rhpam-businesscentral-rhel8                      image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-businesscentral-rhel8              7.6.0           4 hours ago
+rhpam-controller-rhel8                           image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-controller-rhel8                   7.6.0           4 hours ago
+rhpam-kieserver-rhel8                            image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-kieserver-rhel8                    7.6.0           4 hours ago
+rhpam-process-migration-rhel8                    image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-process-migration-rhel8            7.6.0           
+rhpam-smartrouter-rhel8 
 
 * Check existing images (as cluster admin). we need rhpam73
 
@@ -42,23 +54,23 @@ Directions:
 
 * *Business Central*: A platform for authoring business assets such as data objects, rules, processes, cases, and planning entities.
 
-	$ oc import-image my-rhpam-7/rhpam73-businesscentral-openshift --all --from=registry.redhat.io/rhpam-7/rhpam73-businesscentral-openshift --confirm -n openshift
+	$ oc import-image rhpam-businesscentral-rhel8 --all --from=registry.redhat.io/rhpam-7/rhpam-businesscentral-rhel8 --confirm -n openshift
 
 * *KIE Server* REST services runtime environment for business assets such as business processes, rules, cases, and planning entities.
 
-	$ oc import-image my-rhpam-7/rhpam73-kieserver-openshift --all --from=registry.redhat.io/rhpam-7/rhpam73-kieserver-openshift --confirm -n openshift
+	$ oc import-image rhpam-kieserver-rhel8  --all --from=registry.redhat.io/rhpam-7/rhpam-kieserver-rhel8 --confirm -n openshift
 
 * *KIE (Standalone) Controller*:  A component for managing multiple KIE Servers (Process, Decision, Planning) in manage mode.
 
-	$ oc import-image my-rhpam-7/rhpam73-controller-openshift --all --from=registry.redhat.io/rhpam-7/rhpam73-controller-openshift --confirm -n openshift
+	$ oc import-image rhpam-controller-rhel --all --from=registry.redhat.io/rhpam-7/rhpam-controller-rhel --confirm -n openshift
 
 * *Smart Router*: Load balancing, unified view on available business assets, and aggregation of responses throughout multiple KIE Servers (Process, Decision, Planning).
 
-	$ oc import-image my-rhpam-7/rhpam73-smartrouter-openshift --all --from=registry.redhat.io/rhpam-7/rhpam73-smartrouter-openshift --confirm -n openshift
+	$ oc import-image rhpam-smartrouter-rhel8  --all --from=registry.redhat.io/rhpam-7/rhpam-smartrouter-rhel8 --confirm -n openshift
 
 * *Business Central Monitoring*: A platform for monitoring and management of business assets.
 
-	$ oc import-image my-rhpam-7/rhpam73-businesscentral-monitoring-openshift --all --from=registry.redhat.io/rhpam-7/rhpam73-businesscentral-monitoring-openshift --confirm -n openshift
+	$ oc import-image rhpam-businesscentral-monitoring-rhel8 --all --from=registry.redhat.io/rhpam-7/rhpam-businesscentral-monitoring-rhel8 --confirm -n openshift
 
 ==== Insert Templates
 
@@ -84,13 +96,13 @@ Directions:
 		$ cd ./ocp_pam_app_dev
 		$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 		$ oc project tools
-		$ ./Infrastructure/scripts73/setup_nexus.sh <YOUR-TOOLS-NAEMSPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
+		$ ./Infrastructure/scripts76/setup_nexus.sh <YOUR-TOOLS-NAEMSPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
 
 2. SSO Setp
 
 		$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 		$ oc project tools
-		$ ./Infrastructure/scripts73/setup_sso.sh tools FALSE
+		$ ./Infrastructure/scripts76/setup_sso.sh tools FALSE
 		
 3. jenkins
 4. gogs
@@ -104,11 +116,14 @@ Directions:
 	$ cd ./ocp_pam_app_dev
 	$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 	$ oc project pam-dev
-	$ oc create -f Infrastructure/templates/rhpam73-authoring-stelios-1.yaml
-	$ ./Infrastructure/scripts73/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools <CLUSTER PUBLIC URL>192.168.42.21
+	$ oc create -f Infrastructure/templates76/rhpam76-authoring-stelios-1.yaml
+	$ ./Infrastructure/scripts76/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools <APP_NAME>gps <CLUSTER PUBLIC URL>192.168.42.21 <NEXUS_ROUTE_NAME>nexus3
 
-	KIE Server Check: "curl -u executionUser:executionUser123 --insecure https://secure-cgd-kieserver-<YOUR-DEV-NAMESPACE>.apps.<CLUSTER-NAME>/services/rest/server"
-	RHPAM Central Login: rhpamAdmin/rhpamAdmin730
+	KIE Server Check: "curl -u executionUser:executionUser123 --insecure https://secure-gps-kieserver-<YOUR-DEV-NAMESPACE>.apps.<CLUSTER-NAME>/services/rest/server"
+	RHPAM Central Login: rhpamAdmin/rhpamAdmin760
+
+./Infrastructure/scripts76/setup_DEV_managed.sh dev-pam-operator cicd-rhpam gps apps.labs-aws-430a.sandbox452.opentlc.com nexus
+
 
 ** Create Project
 *** *Step 1*: Create processes, rules etc.

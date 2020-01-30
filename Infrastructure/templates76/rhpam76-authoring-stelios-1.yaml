@@ -6,14 +6,14 @@ metadata:
     iconClass: icon-jboss
     tags: rhpam,processserver,jboss,authoring
     version: "1.0"
-    openshift.io/display-name: Red Hat Process Automation Manager 7.2 authoring environment (non-HA, persistent, with https)
+    openshift.io/display-name: Red Hat Process Automation Manager 7.6 authoring environment (non-HA, persistent, with https)
     openshift.io/provider-display-name: Red Hat, Inc.
-    description: Application template for a non-HA persistent authoring environment, for Red Hat Process Automation Manager 7.2
-    template.openshift.io/long-description: This template defines resources needed to develop and execute Rules and Processes on Red Hat Process Automation Manager 7.2, including application deployment configuration, secure and insecure http communication and persistent volume to store data that needs to survive to a restart.
-    template.openshift.io/documentation-url: https://access.redhat.com/documentation/en-us/red_hat_process_automation_manager/7.2/html/deploying_a_red_hat_process_automation_manager_7.2_authoring_environment_on_red_hat_openshift_container_platform/
+    description: Application template for a non-HA persistent authoring environment, for Red Hat Process Automation Manager 7.6
+    template.openshift.io/long-description: This template defines resources needed to develop and execute Rules and Processes on Red Hat Process Automation Manager 7.6, including application deployment configuration, secure and insecure http communication and persistent volume to store data that needs to survive to a restart.
+    template.openshift.io/documentation-url: https://access.redhat.com/documentation/en-us/red_hat_process_automation_manager/7.6s/html/deploying_a_red_hat_process_automation_manager_7.6_authoring_environment_on_red_hat_openshift_container_platform/
     template.openshift.io/support-url: https://access.redhat.com
     template.openshift.io/bindable: "false"
-  name: stelios-1-rhpam72-authoring
+  name: stelios-1-rhpam76-authoring
 labels:
   template: stelios-1-rhpam76-authoring
   rhpam: "1.0"
@@ -195,7 +195,7 @@ parameters:
   value: "rhpam-kieserver-rhel8"
   required: true
 - displayName: ImageStream Tag
-  description: A named pointer to an image in an image stream. Default is "1.0".
+  description: A named pointer to an image in an image stream. Default is "7.6.0".
   name: IMAGE_STREAM_TAG
   value: "7.6.0"
   required: true
@@ -401,10 +401,6 @@ parameters:
 - displayName: RoleMapping replaceRole property
   description: Whether to add to the current roles, or replace the current roles with the mapped ones. Replaces if set to true.
   name: AUTH_ROLE_MAPPER_REPLACE_ROLE
-  required: false
-- displayName: RoleMapping rolesProperties file path
-  description: When present, the RoleMapping Login Module will be configured to use the provided file. This property defines the fully-qualified file path and name of a properties file or resource which maps roles to replacement roles. The format is original_role=role1,role2,role3
-  name: AUTH_ROLE_MAPPER_ROLES_PROPERTIES
   required: false
 objects:
 - kind: ServiceAccount
