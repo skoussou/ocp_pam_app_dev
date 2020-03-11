@@ -119,11 +119,13 @@ Directions:
 	$ oc project pam-dev
 	$ oc create -f Infrastructure/templates76/rhpam76-authoring-stelios-1.yaml
 	$ ./Infrastructure/scripts76/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools <APP_NAME>gps <CLUSTER PUBLIC URL>192.168.42.21 <NEXUS_ROUTE_NAME>nexus3
+	eg.
+	./Infrastructure/scripts76/setup_DEV_managed.sh dev-pam-operator cicd-rhpam gps apps.labs-aws-430a.sandbox452.opentlc.com nexus
 
 	KIE Server Check: "curl -u executionUser:executionUser123 --insecure https://secure-gps-kieserver-<YOUR-DEV-NAMESPACE>.apps.<CLUSTER-NAME>/services/rest/server"
 	RHPAM Central Login: rhpamAdmin/rhpamAdmin760
 
-./Infrastructure/scripts76/setup_DEV_managed.sh dev-pam-operator cicd-rhpam gps apps.labs-aws-430a.sandbox452.opentlc.com nexus
+
 
 
 ** Create Project
