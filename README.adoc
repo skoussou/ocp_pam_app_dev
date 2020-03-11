@@ -49,7 +49,7 @@ Directions:
 	rhpam-process-migration-rhel8                    image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-process-migration-rhel8            7.6.0           
 	rhpam-smartrouter-rhel8 
 
-* Check existing images (as cluster admin). we need rhpam73
+* Check existing images (as cluster admin). we need rhpam76
 
 	$ oc get images |grep rhpam
 
