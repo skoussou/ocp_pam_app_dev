@@ -7,8 +7,8 @@
 
 Directions: 
 
-* link: https://access.redhat.com/RegistryAuthentication[Red Hat Container Registry Authentication] (Using config.json)
-* link: https://access.redhat.com/solutions/3812291[How do I use an imagestreamsecret with redhat.registry.io] (Using credentials rather than json works just fine)
+* https://access.redhat.com/RegistryAuthentication[Red Hat Container Registry Authentication] (Using config.json)
+* https://access.redhat.com/solutions/3812291[How do I use an imagestreamsecret with redhat.registry.io] (Using credentials rather than json works just fine)
 
 	$ oc create secret generic imagestreamsecret --from-file=.dockerconfigjson=/home/stkousso/Stelios/sw11/PAAS/Distros/minishift/1.27/minishift-1.27.0-linux-amd64/config.json --type=kubernetes.io/dockerconfigjson
 
