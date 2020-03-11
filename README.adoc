@@ -42,12 +42,12 @@ Directions:
 ==== Put RHPAM images in place
 
 
-rhpam-businesscentral-monitoring-rhel8           image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-businesscentral-monitoring-rhel8   7.6.0           4 hours ago
-rhpam-businesscentral-rhel8                      image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-businesscentral-rhel8              7.6.0           4 hours ago
-rhpam-controller-rhel8                           image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-controller-rhel8                   7.6.0           4 hours ago
-rhpam-kieserver-rhel8                            image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-kieserver-rhel8                    7.6.0           4 hours ago
-rhpam-process-migration-rhel8                    image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-process-migration-rhel8            7.6.0           
-rhpam-smartrouter-rhel8 
+	rhpam-businesscentral-monitoring-rhel8           image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-businesscentral-monitoring-rhel8   7.6.0           4 hours ago
+	rhpam-businesscentral-rhel8                      image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-businesscentral-rhel8              7.6.0           4 hours ago
+	rhpam-controller-rhel8                           image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-controller-rhel8                   7.6.0           4 hours ago
+	rhpam-kieserver-rhel8                            image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-kieserver-rhel8                    7.6.0           4 hours ago
+	rhpam-process-migration-rhel8                    image-registry.openshift-image-registry.svc:5000/dev-pam-operator/rhpam-process-migration-rhel8            7.6.0           
+	rhpam-smartrouter-rhel8 
 
 * Check existing images (as cluster admin). we need rhpam73
 
