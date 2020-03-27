@@ -1,0 +1,5 @@
+# LOCAL CRC
+../build-7.6.0-MYLOCAL-CRC.sh --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/oracle" --namespace=pam-prod-oracle --registry=default-route-openshift-image-registry.apps-crc.testing --image-tag=7.6.0
+
+# OCP CLUSTER
+../build-7.6.0.sh              --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/oracle" --namespace=pam-prod-oracle --registry=default-route-openshift-image-registry.apps-crc.testing --image-tag=7.6.0

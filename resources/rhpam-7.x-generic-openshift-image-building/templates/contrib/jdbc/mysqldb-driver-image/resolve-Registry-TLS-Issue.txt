@@ -1,0 +1,145 @@
+# Start image build
+
+	$ ../build-7.6.0.sh --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/mysql" --image-tag=5.1.18 --namespace=pam-dbs --registry=default-route-openshift-image-registry.apps-crc.testing
+
+	Error response from daemon: Get https://default-route-openshift-image-registry.apps-crc.testing/v1/users/: x509: certificate signed by unknown authority
+
+# https://github.com/code-ready/crc/issues/775
+	$ oc extract secret/router-ca --keys=tls.crt -n openshift-ingress-operator
+	tls.crt
+	$ cp tls.crt /etc/docker/certs.d/default-route-openshift-image-registry.apps-crc.testing/
+	$ sudo mkdir /etc/docker/certs.d/default-route-openshift-image-registry.apps-crc.testing
+	[sudo] password for stkousso: 
+	$ cp tls.crt /etc/docker/certs.d/default-route-openshift-image-registry.apps-crc.testing/
+	$ sudo cp tls.crt /etc/docker/certs.d/default-route-openshift-image-registry.apps-crc.testing/
+
+
+
+ 1163  docker login -u kubeadmin -p db9Dr-J2csc-8oP78-9sbmf default-route-openshift-image-registry.apps-crc.testing
+ 1164  oc policy add-role-to-user registry-viewer developer
+ 1165  oc policy add-role-to-user registry-editor developer
+ 1166  oc logout
+ 1167  oc login -u developer -p developer
+
+ 1173  oc get pods -n openshift-authentication
+ 1174  oc rsh -n openshift-authentication oauth-openshift-7c5d4dccbc-fxfm2
+ 1175  oc rsh -n openshift-authentication oauth-openshift-7c5d4dccbc-fxfm2:ingress-ca.crt . -n openshift-authentication
+$ cat /run/secrets/kubernetes.io/serviceaccount/ca.crt > ingress-ca.crt
+
+ 1188  oc login -u developer -p developer https://api.crc.testing:6443 --certificate-authority=ingress-ca.crt
+ 1189  ../build-7.6.0.sh --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/mysql" --image-tag=5.1.18 --namespace=pam-dbs --registry=default-route-openshift-image-registry.apps-crc.testing
+
+
+[stkousso@stkousso mysqldb-driver-image]$ ../build-7.6.0.sh --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/mysql" --image-tag=5.1.18 --namespace=pam-dbs --registry=default-route-openshift-image-registry.apps-crc.testing
+Login Succeeded
+~/Stelios/sw11/BPMS/Distros/7.3.1/rhpam-7.3.1-openshift-templates/templates/contrib/jdbc ~/Stelios/sw11/BPMS/Distros/7.3.1/rhpam-7.3.1-openshift-templates/templates/contrib/jdbc/mysqldb-driver-image
+Building mysqldb-driver-image
+Sending build context to Docker daemon 75.26 kB
+Step 1/6 : FROM scratch
+ ---> 
+Step 2/6 : LABEL maintainer "stelios@redhat.com" name "MysqlB JDBC Driver" version "5.1.8"
+ ---> Running in 8f4c9f390f38
+ ---> 5d55e9b0b84d
+Removing intermediate container 8f4c9f390f38
+Step 3/6 : ARG ARTIFACT_MVN_REPO
+ ---> Running in 2b97fc8bd280
+ ---> 36d9e8e9c8c2
+Removing intermediate container 2b97fc8bd280
+Step 4/6 : COPY install.sh mariadb-driver-image/install.properties /extensions/
+ ---> 9c4e78cf16e4
+Removing intermediate container c0fa89977b41
+Step 5/6 : COPY mysqldb-driver-image/modules /extensions/modules/
+ ---> 05f9c433b086
+Removing intermediate container abff1c0bcd68
+Step 6/6 : ADD ${ARTIFACT_MVN_REPO}/com/mysql/jdbc/mysql-connector-java/5.1.18/mysql-connector-java-5.1.18.jar /extensions/modules/system/layers/openshift/com/mysql/main/mysql-connector-java-5.1.18.jar
+Downloading 67.17 kB
+
+ ---> a32a0980f7fa
+Removing intermediate container 85b3931c0ea8
+Successfully built a32a0980f7fa
+Finished bulding default-route-openshift-image-registry.apps-crc.testing/openshift/mysqldb-driver-image:5.1.8
+Pushing default-route-openshift-image-registry.apps-crc.testing/openshift/mysqldb-driver-image:5.1.8
+The push refers to a repository [default-route-openshift-image-registry.apps-crc.testing/openshift/mysqldb-driver-image]
+0106805d1c79: Preparing 
+f05b3c14df02: Preparing 
+edd673e2f853: Preparing 
+unauthorized: authentication required
+
+
+
+# Verify
+	$ docker login -u developer -p $(oc whoami -t) default-route-openshift-image-registry.apps-crc.testing 
+	Login Succeeded
+
+# Start work
+# Login either as kubeadmin
+# requires hardcoding of user in build.sh to 'kubeadmin'
+
+oc login -u kubeadmin -p db9Dr-J2csc-8oP78-9sbmf https://api.crc.testing:6443 --certificate-authority=ingress-ca.crt
+
+# or as developer requires the following commands to have been run
+# docker login -u kubeadmin -p db9Dr-J2csc-8oP78-9sbmf default-route-openshift-image-registry.apps-crc.testing
+# oc policy add-role-to-user registry-viewer developer
+# oc policy add-role-to-user registry-editor developer
+# oc logout
+
+oc login -u developer -p developer https://api.crc.testing:6443 --certificate-authority=ingress-ca.crt
+
+
+./build-7.6.0.sh --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/mysql" --namespace=pam-dbs --registry=default-route-openshift-image-registry.apps-crc.testing --image-tag=7.6.0
+
+[stkousso@stkousso mysqldb-driver-image]$ ../build-7.6.0.sh --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/mysql" --namespace=pam-dbs --registry=default-route-openshift-image-registry.apps-crc.testing --image-tag=7.6.0
+Login Succeeded
+~/Stelios/sw11/BPMS/Distros/7.3.1/rhpam-7.3.1-openshift-templates/templates/contrib/jdbc ~/Stelios/sw11/BPMS/Distros/7.3.1/rhpam-7.3.1-openshift-templates/templates/contrib/jdbc/mysqldb-driver-image
+Building mysqldb-driver-image
+docker build -f mysqldb-driver-image/Dockerfile . -t default-route-openshift-image-registry.apps-crc.testing/openshift/mysqldb-driver-image:5.1.18 --build-arg ARTIFACT_MVN_REPO=https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/mysql
+Sending build context to Docker daemon 82.43 kB
+Step 1/6 : FROM scratch
+ ---> 
+Step 2/6 : LABEL maintainer "stelios@redhat.com" name "MysqlB JDBC Driver" version "5.1.18"
+ ---> Using cache
+ ---> 5ad7e8a7e751
+Step 3/6 : ARG ARTIFACT_MVN_REPO
+ ---> Using cache
+ ---> ad31b4afa3c0
+Step 4/6 : COPY install.sh mariadb-driver-image/install.properties /extensions/
+ ---> Using cache
+ ---> d5d292621c71
+Step 5/6 : COPY mysqldb-driver-image/modules /extensions/modules/
+ ---> Using cache
+ ---> 028abb630552
+Step 6/6 : ADD ${ARTIFACT_MVN_REPO}/com/mysql/jdbc/mysql-connector-java/5.1.18/mysql-connector-java-5.1.18.jar /extensions/modules/system/layers/openshift/com/mysql/main/mysql-connector-java-5.1.18.jar
+Downloading 67.17 kB
+
+ ---> b6d3012fcab8
+Removing intermediate container 6322aae2cd44
+Successfully built b6d3012fcab8
+Finished bulding default-route-openshift-image-registry.apps-crc.testing/openshift/mysqldb-driver-image:5.1.18
+Pushing default-route-openshift-image-registry.apps-crc.testing/openshift/mysqldb-driver-image:5.1.18
+The push refers to a repository [default-route-openshift-image-registry.apps-crc.testing/openshift/mysqldb-driver-image]
+e566f249e176: Pushed 
+b7032c77e48b: Layer already exists 
+f103e5519d1a: Layer already exists 
+5.1.18: digest: sha256:97202e20384f19ad4525f5f840557b7ef7208be3f5a3d0077d35e8dc85de9b8e size: 940
+Pushed default-route-openshift-image-registry.apps-crc.testing/openshift/mysqldb-driver-image:5.1.18
+I0326 11:39:25.830905   23749 imagestreamlookup.go:328] No tags found on image, returning nil
+--> Found image 5016da0 (8 weeks old) in image stream "openshift/rhpam-kieserver-rhel8" under tag "7.6.0" for "openshift/rhpam-kieserver-rhel8:7.6.0"
+
+    Red Hat Process Automation Manager KIE server 7.6 
+    ------------------------------------------------- 
+    Platform for running Red Hat Process Automation Manager KIE server
+
+    Tags: builder, javaee, eap, eap7, rhpam, rhpam7
+
+    * A source build using <unknown> will be created
+      * The resulting image will be pushed to image stream tag "rhpam-kieserver-rhel8-mysqldb:5.1.18"
+      * Use 'oc start-build' to trigger a new build
+
+--> Creating resources with label build=rhpam-kieserver-rhel8-mysqldb ...
+    imagestream.image.openshift.io "rhpam-kieserver-rhel8-mysqldb" created
+    buildconfig.build.openshift.io "rhpam-kieserver-rhel8-mysqldb" created
+--> Success
+~/Stelios/sw11/BPMS/Distros/7.3.1/rhpam-7.3.1-openshift-templates/templates/contrib/jdbc/mysqldb-driver-image
+
+
+

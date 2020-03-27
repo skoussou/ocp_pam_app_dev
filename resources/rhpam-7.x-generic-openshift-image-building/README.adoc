@@ -1,0 +1,1 @@
+We have taken this from 7.3.1 (last version that used the build.sh) and moved it here to re-use with future kieserver image+driver building (mysql, oracle)
