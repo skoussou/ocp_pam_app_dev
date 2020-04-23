@@ -117,7 +117,7 @@ Directions:
 	$ cd ./ocp_pam_app_dev
 	$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 	$ oc project pam-dev
-	$ oc create -f Infrastructure/templates76/rhpam76-authoring-stelios-1.yaml
+	$ oc create -f Infrastructure/templates76/rhpam76-authoring-custom.yaml
 	$ ./Infrastructure/scripts76/setup_DEV_managed.sh <YOUR-DEV-NAMESPACE>pam-dev <YOUR-TOOLS-NAMESPACE>tools <APP_NAME>gps <CLUSTER PUBLIC URL>192.168.42.21 <NEXUS_ROUTE_NAME>nexus3
 	eg.
 	./Infrastructure/scripts76/setup_DEV_managed.sh dev-pam-operator cicd-rhpam gps apps.labs-aws-430a.sandbox452.opentlc.com nexus
