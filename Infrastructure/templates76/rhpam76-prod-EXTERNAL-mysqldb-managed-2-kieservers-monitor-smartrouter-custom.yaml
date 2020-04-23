@@ -1138,7 +1138,11 @@ objects:
           imagePullPolicy: Always
           resources:
             limits:
+              cpu: '1'
               memory: "${KIE_SERVER_MEMORY_LIMIT}"
+            requests:
+              cpu: 500m
+              memory: "${KIE_SERVER_MEMORY_LIMIT}"  
           volumeMounts:
           - name: kieserver-keystore-volume
             mountPath: "/etc/kieserver-secret-volume"
@@ -1420,7 +1424,11 @@ objects:
           imagePullPolicy: Always
           resources:
             limits:
+              cpu: '1'
               memory: "${KIE_SERVER_MEMORY_LIMIT}"
+            requests:
+              cpu: 500m
+              memory: "${KIE_SERVER_MEMORY_LIMIT}"  
           volumeMounts:
           - name: kieserver-keystore-volume
             mountPath: "/etc/kieserver-secret-volume"

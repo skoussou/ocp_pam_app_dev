@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<settings>
+
+  <mirrors>
+    <mirror>
+      <id>Nexus</id>
+      <name>Nexus Public Mirror</name>
+      <!--url>http://nexus3-tools.192.168.42.21.nip.io/repository/maven-all-public/</url-->
+      <url>http://nexus-cicd-pam.apps.cluster-rhpam7-6446.rhpam7-6446.example.opentlc.com/repository/maven-all-public/</url>
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+  </mirrors>
+  <servers>
+    <server>
+      <id>Nexus</id>
+      <username>admin</username>
+      <password>admin123</password>
+    </server>
+  </servers>
+
+</settings>
