@@ -69,6 +69,8 @@ function docker_login() {
     # take ingress-ca.crt and docker/podman login --certificate-authority=ingress-ca.crt (see: https://github.com/code-ready/crc/issues/775) to authenticate against non-ca based certificate
     # for kubeadmin user --> 
     docker login -u kubeadmin -p `oc whoami -t` $registry 
+
+    #docker login -u `oc whoami` -p `oc whoami -t` $registry --certificate-authority=ingress-ca.crt
     #docker login -u `oc whoami` -p `oc whoami -t` $registry
 }
 
@@ -100,6 +102,18 @@ function create_build() {
     local version=$2
     local namespace=$3
 
+    # Delete previous BuildConfig in case we are running an update of the base image
+    echo "oc delete bc rhpam-kieserver-rhel8-$driver"
+    oc delete bc rhpam-kieserver-rhel8-$driver
+
+#    oc new-build -n openshift \
+#        --name rhpam-kieserver-rhel8-$driver \
+#        --image-stream=openshift/rhpam-kieserver-rhel8:$image_tag \
+#        --source-image=openshift/$driver-driver-image:$version \
+#        --source-image-path=/extensions:$driver-driver/ \
+#        --to=rhpam-kieserver-rhel8-$driver:$image_tag \
+#        -e CUSTOM_INSTALL_DIRECTORIES=$driver-driver/extensions
+
     echo "oc new-build -n $namespace \
         --name rhpam-kieserver-rhel8-$driver \
         --image-stream=$namespace/rhpam-kieserver-rhel8:$image_tag \
@@ -110,7 +124,7 @@ function create_build() {
 
     oc new-build -n $namespace \
         --name rhpam-kieserver-rhel8-$driver \
-        --image-stream=rhpam-kieserver-rhel8:$image_tag \
+        --image-stream=$namespace/rhpam-kieserver-rhel8:$image_tag \
         --source-image=$namespace/$driver-driver-image:$version \
         --source-image-path=/extensions:$driver-driver/ \
         --to=rhpam-kieserver-rhel8-$driver:$image_tag \

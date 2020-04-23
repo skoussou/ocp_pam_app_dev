@@ -15,27 +15,40 @@ Implemented driver configurations (JDBC Drivers are NOT included):
 
 ## Build a driver image of your choice
 
-### Drivers publicly available
-
-If a driver can be publicly downloaded it has a default value for the ARTIFACT_MVN_REPO argument
-
+* The script has the following options
 ```bash
-# Build mariadb using a tag with the version
-$ docker build -f mariadb-driver-image/Dockerfile -t mariadb-driver-image:12.2 .
+../build.sh --artifact-repo="." --namespace=<YOUR-NAMESPACE|leave empty for openshift> --registry=<YOUR REGISTRY> --image-tag=<LATEST VERSION OF KIE SERVER IMAGE>
+```
+
+### Driver publicly available
+
+* If a driver can be publicly downloaded it has a default value for the ARTIFACT_MVN_REPO argument of the Dockerfile (found in the individual $database_driver_image directories)
+
+#### Build in local CRC
+```bash
+cd $database_driver_image
+../build-MYLOCAL-CRC.sh --namespace=pam-prod --registry=default-route-openshift-image-registry.apps-crc.testing --image-tag=7.6.0
+```
+
+#### OCP CLUSTER
+```bash
+cd $database_driver_image
+../build.sh --artifact-repo="." --namespace=pam-prod-oracle --registry=default-route-openshift-image-registry.apps-crc.testing --image-tag=7.6.0
 ```
 
 ### Drivers not publicly available
 
-If a driver cannot be publicly downloaded it is required to provide a value for the ARTIFACT_MVN_REPO argument that might point to a local file or a private Maven repository
+* If a driver *_cannot_* be publicly downloaded (eg. Oracle, Mysql, Mssql) add the driver either in a repository of your own or insert the JDBC 4 Driver in the individual $database_driver_image directory and mdify accordingly Dockerfile (found in the individual $database_driver_image directories) to COPY the driver in the image. See exampel in the *oracle_driver_image* directory)
 
+#### Build in local CRC
 ```bash
-# Local path. e.g. ./drivers/com/sybase/jconn4/16.0_PL05/jconn4-16.0_PL05.jar
-$ docker build -f sybase-driver-image/Dockerfile --build-args ARTIFACT_MVN_REPO=drivers -t sybase-driver-image:16.0_PL05 .
-
-# Private Maven Repository
-$ docker build sybase-driver-image --build-args ARTIFACT_MVN_REPO=https://mvn-repo.example.com/nexus/content/groups/public -t sybase-driver-image:16.0_PL05 .
+cd $database_driver_image
+../build-MYLOCAL-CRC.sh --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/oracle" --namespace=pam-prod-oracle --registry=default-route-openshift-image-registry.apps-crc.testing --image-tag=7.6.0
+```
+#### OCP CLUSTER
+```bash
+cd $database_driver_image
+../build.sh --artifact-repo="." --namespace=pam-prod-oracle --registry=default-route-openshift-image-registry.apps-crc.testing --image-tag=7.6.0
 ```
 
-## The build.sh script
 
-The `build.sh` script is customized for Red Hat Process Automation Manager (RHPAM) KIE Server

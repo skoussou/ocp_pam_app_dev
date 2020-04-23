@@ -16,7 +16,8 @@ function print_help() {
     echo "   Available driver images to build: db2,derby,mssql,oracle,mariadb,sybase"
     echo "   --registry         Specifies the docker registry to use for tagging and pushing. Defaults to docker-registry.default.svc:5000"
     echo "   --artifact-repo    Specifies the Maven repository where the jdbc drivers are available. Oracle does not have a default value"
-    echo "   --image-tag        Specifies the tag to use when building the image. Defaults to 1.1"
+    echo "   --image-tag        Specifies the tag to use when building the image. Defaults to 7.6.0"
+    echo "   --namespace        Specifies the namespace where the build will take place (default openshift)"
 }
 
 while (($#))
@@ -31,6 +32,9 @@ do
         --image-tag=*)
             image_tag=${1#*=}
         ;;
+        --namespace=*)
+            namespace=${1#*=}
+        ;;	
         -h)
             print_help
             exit 0
@@ -53,15 +57,16 @@ fi
 current_dir=${PWD##*/}
 driver=$(echo $current_dir | cut -d '-' -f 1)
 image_tag=${image_tag:-1.1}
+namespace=${namespace:-openshift}
 
-registry=${registry:-docker-registry.default.svc:5000}
+registry=${registry:-image-registry.openshift-image-registry.svc:5000}
 
 function docker_login() {
     if [[ $(oc whoami -t > /dev/null; echo $?) == 1 ]]; then
         echo "You must be logged in"
         exit 1
     fi
-    docker login -u `oc whoami` -p `oc whoami -t` $registry
+     docker login -u `oc whoami` -p `oc whoami -t` $registry
 }
 
 function build() {
@@ -71,8 +76,10 @@ function build() {
     echo Building $driver
     if [[ -n $artifact_repo ]]
     then
+        echo "docker build -f $current_dir/Dockerfile . -t $tag --build-arg ARTIFACT_MVN_REPO=$artifact_repo"
         docker build -f $current_dir/Dockerfile . -t $tag --build-arg ARTIFACT_MVN_REPO=$artifact_repo
     else
+        echo "docker build -f $current_dir/Dockerfile . -t $tag"
         docker build -f $current_dir/Dockerfile . -t $tag
     fi
     echo Finished bulding $tag
@@ -88,10 +95,32 @@ function push() {
 function create_build() {
     local driver=$1
     local version=$2
-    oc new-build -n openshift \
+    local namespace=$3
+
+    # Delete previous BuildConfig in case we are running an update of the base image
+    echo "oc delete bc rhpam-kieserver-rhel8-$driver"
+    oc delete bc rhpam-kieserver-rhel8-$driver
+
+#    oc new-build -n openshift \
+#        --name rhpam-kieserver-rhel8-$driver \
+#        --image-stream=openshift/rhpam-kieserver-rhel8:$image_tag \
+#        --source-image=openshift/$driver-driver-image:$version \
+#        --source-image-path=/extensions:$driver-driver/ \
+#        --to=rhpam-kieserver-rhel8-$driver:$image_tag \
+#        -e CUSTOM_INSTALL_DIRECTORIES=$driver-driver/extensions
+
+    echo "oc new-build -n $namespace \
         --name rhpam-kieserver-rhel8-$driver \
-        --image-stream=openshift/rhpam-kieserver-rhel8:$image_tag \
-        --source-image=openshift/$driver-driver-image:$version \
+        --image-stream=$namespace/rhpam-kieserver-rhel8:$image_tag \
+        --source-image=$namespace/$driver-driver-image:$version \
+        --source-image-path=/extensions:$driver-driver/ \
+        --to=rhpam-kieserver-rhel8-$driver:$image_tag \
+        -e CUSTOM_INSTALL_DIRECTORIES=$driver-driver/extensions"
+
+    oc new-build -n $namespace \
+        --name rhpam-kieserver-rhel8-$driver \
+        --image-stream=$namespace/rhpam-kieserver-rhel8:$image_tag \
+        --source-image=$namespace/$driver-driver-image:$version \
         --source-image-path=/extensions:$driver-driver/ \
         --to=rhpam-kieserver-rhel8-$driver:$image_tag \
         -e CUSTOM_INSTALL_DIRECTORIES=$driver-driver/extensions
@@ -103,9 +132,9 @@ pushd ..
 
 image_name=$driver-driver-image
 version=$(grep version $current_dir/Dockerfile | awk -F"=" '{print $2}' | sed 's/"//g')
-tag=$registry/openshift/$image_name:$version
+tag=$registry/$namespace/$image_name:$version
 build $image_name $tag ${artifact_repo:-}
 push $tag
-create_build $driver $version
+create_build $driver $version $namespace
 
 popd

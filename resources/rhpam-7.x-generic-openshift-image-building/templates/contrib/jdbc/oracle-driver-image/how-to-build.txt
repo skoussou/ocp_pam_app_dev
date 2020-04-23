@@ -2,4 +2,9 @@
 ../build-7.6.0-MYLOCAL-CRC.sh --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/oracle" --namespace=pam-prod-oracle --registry=default-route-openshift-image-registry.apps-crc.testing --image-tag=7.6.0
 
 # OCP CLUSTER
-../build-7.6.0.sh              --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/oracle" --namespace=pam-prod-oracle --registry=default-route-openshift-image-registry.apps-crc.testing --image-tag=7.6.0
+../build.sh              --artifact-repo="https://github.com/skoussou/ocp_pam_app_dev/tree/master/Infrastructure/resources/drivers/oracle" --namespace=pam-prod-oracle --registry=default-route-openshift-image-registry.apps-crc.testing --image-tag=7.6.0
+
+
+# Dockerfile with locally available Driver
+
+../build.sh --artifact-repo="." --namespace=<YOUR-NAMESPACE> --registry=<YOUR REGISTRY> --image-tag=<LATEST VERSION OF KIE SERVER IMAGE>
