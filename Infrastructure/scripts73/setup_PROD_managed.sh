@@ -1,6 +1,6 @@
 #!/bin/bash
 # Setup PRODUCTION Project
-if [ "$#" -ne 3 ]; then
+if [ "$#" -ne 4 ]; then
     echo "Usage:"
     echo "  $0 PROD_NAMESPACE TOOLS_NAMESPACE APP_NAME ENV [QA, SIT, UAT, PRE-PROD, PROD]"
     exit 1
