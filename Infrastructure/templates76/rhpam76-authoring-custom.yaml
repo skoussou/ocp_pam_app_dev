@@ -10,10 +10,10 @@ metadata:
     openshift.io/provider-display-name: Red Hat, Inc.
     description: Application template for a non-HA persistent authoring environment, for Red Hat Process Automation Manager 7.6
     template.openshift.io/long-description: This template defines resources needed to develop and execute Rules and Processes on Red Hat Process Automation Manager 7.6, including application deployment configuration, secure and insecure http communication and persistent volume to store data that needs to survive to a restart.
-    template.openshift.io/documentation-url: https://access.redhat.com/documentation/en-us/red_hat_process_automation_manager/7.6s/html/deploying_a_red_hat_process_automation_manager_7.6_authoring_environment_on_red_hat_openshift_container_platform/
+    template.openshift.io/documentation-url: https://access.redhat.com/documentation/en-us/red_hat_process_automation_manager/7.6/html/deploying_a_red_hat_process_automation_manager_7.6_authoring_environment_on_red_hat_openshift_container_platform/
     template.openshift.io/support-url: https://access.redhat.com
     template.openshift.io/bindable: "false"
-  name: stelios-1-rhpam76-authoring
+  name: rhpam76-authoring-managed
 labels:
   template: stelios-1-rhpam76-authoring
   rhpam: "1.0"
