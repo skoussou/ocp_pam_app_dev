@@ -18,39 +18,4 @@
     </server>
   </servers>
 
--  <profiles>
--    <!-- Configure the JBoss GA Maven repository -->
--    <profile>
--      <id>maven-all-public</id>
--      <repositories>
--        <repository>
--          <id>maven-all-public</id>
--          <url>URL</url>
--          <releases>
--            <enabled>true</enabled>
--          </releases>
--          <snapshots>
--            <enabled>true</enabled>
--          </snapshots>
--        </repository>
--      </repositories>
--      <pluginRepositories>
--        <pluginRepository>
--          <id>maven-all-public</id>
--          <url>URL</url>
--          <releases>
--            <enabled>true</enabled>
--          </releases>
--          <snapshots>
--            <enabled>false</enabled>
--          </snapshots>
--        </pluginRepository>
--      </pluginRepositories>
--    </profile>
--  </profiles>
--  <activeProfiles>
--    <!-- Optionally, make the repository active by default -->
--    <activeProfile>maven-all-public</activeProfile>
--  </activeProfiles>  
-
 </settings>
