@@ -24,7 +24,7 @@ Directions:
 
 * No special prep required if access to external Red Hat Maven repositories is possible and 
 * The NEXUS image 'docker.io/sonatype/nexus3' is possible to download
-* Consider this GIT Repo for the setup of the tooling https://github.com/erkerc/openshift-cd-demo.git
+* *PREFERRED* - Consider this GIT Repo for the setup of the tooling https://github.com/erkerc/openshift-cd-demo.git
 
 === RHPAM
 
@@ -87,6 +87,8 @@ Directions:
 == CI/CD PoC Setups
 
 === Tools project
+
+* *PREFERRED* - Consider this GIT Repo for the setup of the tooling https://github.com/erkerc/openshift-cd-demo.git
 
 	oc new-project <YOUR-TOOLS-NAEMSPACE>tools
 	
@@ -263,17 +265,17 @@ image:pics/RH-PAM-Flow-NoCICD-InternalDB.png[alt="Non-CICD RHPAM Setup with Inte
 	$ cd ./ocp_pam_app_dev
 	$ oc login -u <CLUSTER PUBLIC IP> -u <USERNAME> -p <PASSWORD>
 	$ oc project pam-prod
-	$ oc create -f Infrastructure/templates/rhpam73-prod-stelios-1.yaml
-	$ ./Infrastructure/scripts73/setup_PROD_managed.sh <YOUR-DEV-NAMESPACE>pam-prod <YOUR-TOOLS-NAMESPACE>tools APP_NAME <ENV [QA,SIT,UAT,PRE-PROD,PROD]>
+	$ oc create -f Infrastructure/templates76/rhpam76-prod-managed-2-kieservers-monitor-smartrouter-custom.yaml
+	$ ./Infrastructure/scripts76/setup_PROD_managed.sh <YOUR-NAMESPACE>pam-prod <YOUR-TOOLS-NAMESPACE>tools APP_NAME <ENV [QA,SIT,UAT,PRE-PROD,PROD]>
 
 ==== Resulting Installation
 
-- *Business Central Monitor*: https://secure-cgd-retail-rhpamcentrmon-pam-prod.apps.fe44.example.opentlc.com/ (rhpamAdmin/rhpamAdmin730, used to deploy KJAR projects, manage KJAR and template configurations, monitor)
-- *Smart Router*: http://cgd-retail-smartrouter-pam-prod.apps.fe44.example.opentlc.com/ (Service used as smart proxy of processes on any connected KIESERVER cluster group)
-- *KIE Server Cluster Group-1*: https://secure-cgd-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com/docs
-- *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1* (Runs a KJAR(s) related to a division and has dedicated Database)
-- *KIE Server Cluster Group-2*: https://secure-cgd-retail-kieserver-cluster-group-2-pam-prod.apps.fe44.example.opentlc.com/docs
-- *cgd-retail-postgresql-1*: Database dedicated for *KIE Server Cluster Group-2* (Runs a *separate from Cluster Group-1* KJAR(s) related to a *secondary* division and has dedicated Database)
+- *Business Central Monitor*: https://secure-${APP_NAME}-rhpamcentrmon-pam-prod.apps.fe44.example.opentlc.com/ (rhpamAdmin/rhpamAdmin730, used to deploy KJAR projects, manage KJAR and template configurations, monitor)
+- *Smart Router*: http://${APP_NAME}-smartrouter-pam-prod.apps.fe44.example.opentlc.com/ (Service used as smart proxy of processes on any connected KIESERVER cluster group)
+- *KIE Server Cluster Group-1*: https://${APP_NAME}-retail-kieserver-cluster-group-1-pam-prod.apps.fe44.example.opentlc.com/docs
+- *${APP_NAME}-postgresql-1*: Database dedicated for *KIE Server Cluster Group-1* (Runs a KJAR(s) related to a division and has dedicated Database)
+- *KIE Server Cluster Group-2*: https://secure-${APP_NAME}-kieserver-cluster-group-2-pam-prod.apps.fe44.example.opentlc.com/docs
+- *${APP_NAME}-postgresql-1*: Database dedicated for *KIE Server Cluster Group-2* (Runs a *separate from Cluster Group-1* KJAR(s) related to a *secondary* division and has dedicated Database)
 
 
 ==== Deploying, Executing, Monitoring, Managing Process Projects in PROD
