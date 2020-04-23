@@ -1,15 +1,21 @@
 #!/bin/bash
 # Setup PRODUCTION Project
-if [ "$#" -ne 4 ]; then
+if [ "$#" -ne 10 ]; then
     echo "Usage:"
-    echo "  $0 PROD_NAMESPACE TOOLS_NAMESPACE APP_NAME ENV [QA, SIT, UAT, PRE-PROD, PROD]"
+    echo "  $0 PROD_NAMESPACE TOOLS_NAMESPACE APP_NAME EXTERNAL_DB_HOST EXTERNAL_DB EXTERNAL_DB_USER EXTERNAL_DB_PWD ENV[DEV,QA,SIT,UAT,PRE-PROD,PROD]] KIE_SERVER_IMAGE_STREAM_NAME IMAGE_STREAM_TAG"
     exit 1
 fi
 
 PROD_NAMESPACE=$1
 TOOLS_NAMESPACE=$2
 APP_NAME=$3
-ENV=$4
+EXTERNAL_DB_HOST=$4
+EXTERNAL_DB=$5
+EXTERNAL_DB_USER=$6
+EXTERNAL_DB_PWD=$7
+ENV=$8
+KIE_SERVER_IMAGE_STREAM_NAME=$9
+IMAGE_STREAM_TAG=${10}
 echo "Setting up RH PAM PRODUCTION Environment in project ${PROD_NAMESPACE}"
 
 
@@ -80,13 +86,20 @@ echo "               cd /opt/eap/bin"
 echo "               ./add-user.sh -a -u <user-name> -p <password> -g kie-server,rest-all,<YOUR ROLE from Business Process>"
 echo "#################################################################################################"
 echo ""
-oc new-app --template=rhpam76-prod-managed  -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret  \
+oc new-app --template=rhpam76-prod-external-mysqldb-managed  -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret  \
 -p APPLICATION_NAME=${APP_NAME} -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral  -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass  -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks  \
--p KIE_SERVER_HTTPS_NAME=kieserver  -p KIE_SERVER1_HOSTNAME_HTTP="${APP_NAME}-kieserver-cluster-group-1-${DEV_NAMESPACE}.${CLUSTER}" \
--p KIE_SERVER2_HOSTNAME_HTTP="${APP_NAME}-kieserver-cluster-group-2-${DEV_NAMESPACE}.${CLUSTER}" -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass   -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks  \
--p KIE_ADMIN_USER=rhpamadmin   -p KIE_ADMIN_PWD=rhpamadmin760   -p KIE_SERVER_USER=executionUser   -p KIE_SERVER_PWD=executionUser123   -p KIE_SERVER_CONTROLLER_USER=controllerUser   \
--p KIE_SERVER_CONTROLLER_PWD=controllerUser123 -p MAVEN_REPO_URL=${NEXUS_ROUTE_URL}/maven-public  -p MAVEN_REPO_USERNAME=admin  -p MAVEN_REPO_PASSWORD=admin123  -p MAVEN_REPO_ID=maven-public \
--p SMART_ROUTER_CONTAINER_REPLICAS=1 -p KIE_SERVER_CONTAINER_REPLICAS=1 -l app=${APP_NAME}-pam-${ENV} -n ${PROD_NAMESPACE}
+-p KIE_SERVER_HTTPS_NAME=kieserver -p KIE_SERVER1_HOSTNAME_HTTP="${APP_NAME}-kieserver-cluster-group-1-${DEV_NAMESPACE}.${CLUSTER}" -p KIE_SERVER2_HOSTNAME_HTTP="${APP_NAME}-kieserver-cluster-group-2-${DEV_NAMESPACE}.${CLUSTER}" \
+-p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass   -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks  -p KIE_ADMIN_USER=rhpamadmin   -p KIE_ADMIN_PWD=rhpamadmin760   \
+-p KIE_SERVER_USER=executionUser   -p KIE_SERVER_PWD=executionUser123   -p KIE_SERVER_CONTROLLER_USER=controllerUser   -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 \
+-p MAVEN_REPO_URL=${NEXUS_ROUTE_URL}'/maven-public'  -p MAVEN_REPO_USERNAME=admin  -p MAVEN_REPO_PASSWORD=admin123  -p MAVEN_REPO_ID=maven-public -p SMART_ROUTER_CONTAINER_REPLICAS=1 \
+-p KIE_SERVER_CONTAINER_REPLICAS=1  -p KIE_SERVER_IMAGE_STREAM_NAME=$KIE_SERVER_IMAGE_STREAM_NAME -p IMAGE_STREAM_TAG=$IMAGE_STREAM_TAG \
+-p KIE_SERVER_EXTERNALDB_DIALECT='org.hibernate.dialect.MySQL5Dialect' -p KIE_SERVER_EXTERNALDB_DB=${EXTERNAL_DB} -p KIE_SERVER_EXTERNALDB_SERVICE_HOST=${EXTERNAL_DB_HOST} \
+-p KIE_SERVER_EXTERNALDB_SERVICE_PORT=3306 -p KIE_SERVER_EXTERNALDB_JNDI="java:/jboss/datasources/rhpam" -p KIE_SERVER_EXTERNALDB_DRIVER=mysql \
+-p KIE_SERVER_EXTERNALDB_USER=${EXTERNAL_DB_USER} -p KIE_SERVER_EXTERNALDB_PWD=${EXTERNAL_DB_PWD} -p KIE_SERVER_EXTERNALDB_NONXA="false" -p KIE_SERVER_EXTERNALDB_MIN_POOL_SIZE=5 \
+-p KIE_SERVER_EXTERNALDB_MAX_POOL_SIZE=10 -p KIE_SERVER_EXTERNALDB_CONNECTION_CHECKER='org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker' \
+-p KIE_SERVER_EXTERNALDB_EXCEPTION_SORTER='org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter' -p KIE_SERVER_EXTERNALDB_BACKGROUND_VALIDATION=10000 \
+-p KIE_SERVER_CONTAINER_DEPLOYMENT='basickjar(basic)=com.redhat:basic-kjar:1.0.0'
+-p KIE_SERVER_EXTERNALDB_BACKGROUND_VALIDATION_MILLIS="true" -l app=pam-${APP_NAME}-${ENV}-n ${PROD_NAMESPACE}
 
 echo ""
 echo ""
@@ -111,14 +124,11 @@ echo ""
 echo "          - example adding new user (JSON, REMOTE COMMAND, to realm and client with variable roles"
 echo "#################################################################################################"
 echo ""
-SSO_ROUTE_URL=http://$(oc get route ${APP_NAME}-sso --template='{{ .spec.host }}' -n $TOOLS_NAMESPACE)
+#SSO_ROUTE_URL=http://$(oc get route cgd-sso --template='{{ .spec.host }}' -n $TOOLS_NAMESPACE)
 
-echo "URL to authenticate with SSO $SSO_ROUTE_URL/auth with ssoadmin/ssoadmin730!"
-echo ""
-echo "removed creation until RHSSO issue corrected"
-
-
-
+#echo "URL to authenticate with SSO $SSO_ROUTE_URL/auth with ssoadmin/ssoadmin720!"
+#echo ""
+#echo "removed creation until RHSSO issue corrected"
 
 
 
