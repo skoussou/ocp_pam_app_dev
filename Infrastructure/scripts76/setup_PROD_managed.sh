@@ -86,7 +86,7 @@ oc new-app --template=rhpam76-prod-managed  -p BUSINESS_CENTRAL_HTTPS_SECRET=bus
 -p KIE_SERVER2_HOSTNAME_HTTP="${APP_NAME}-kieserver-cluster-group-2-${DEV_NAMESPACE}.${CLUSTER}" -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass   -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks  \
 -p KIE_ADMIN_USER=rhpamadmin   -p KIE_ADMIN_PWD=rhpamadmin760   -p KIE_SERVER_USER=executionUser   -p KIE_SERVER_PWD=executionUser123   -p KIE_SERVER_CONTROLLER_USER=controllerUser   \
 -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 -p MAVEN_REPO_URL=${NEXUS_ROUTE_URL}/maven-public  -p MAVEN_REPO_USERNAME=admin  -p MAVEN_REPO_PASSWORD=admin123  -p MAVEN_REPO_ID=maven-public \
--p SMART_ROUTER_CONTAINER_REPLICAS=1 -p KIE_SERVER_CONTAINER_REPLICAS=1 -l app=${APP_NAME}-pam-${ENV} -n ${PROD_NAMESPACE}
+-p SMART_ROUTER_CONTAINER_REPLICAS=1 -p KIE_SERVER_CONTAINER_REPLICAS=1 -l app=pam-${APP_NAME}-${ENV} -n ${PROD_NAMESPACE}
 
 echo ""
 echo ""

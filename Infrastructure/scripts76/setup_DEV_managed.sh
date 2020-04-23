@@ -31,6 +31,7 @@ echo "##########################################################################
 echo ""
 
 NEXUS_ROUTE_URL=http://$(oc get route $NEXUS_ROUTE_NAME --template='{{ .spec.host }}' -n $TOOLS_NAMESPACE)
+#NEXUS_ROUTE_URL=http://$(oc get route nexus --template='{{ .spec.host }}' -n $TOOLS_NAMESPACE)
 echo "NEXUS_ROUTE_URL=$NEXUS_ROUTE_URL"
 sed -i "s@URL@${NEXUS_ROUTE_URL}/repository/maven-all-public/@" ./Infrastructure/templates76/settings.xml
 
@@ -79,7 +80,14 @@ echo "               ./add-user.sh -a -u <user-name> -p <password> -g kie-server
 echo "#################################################################################################"
 echo ""
 
-oc new-app --template=stelios-1-rhpam76-authoring -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret -p APPLICATION_NAME=${APP_NAME} -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks -p KIE_SERVER_HTTPS_NAME=kieserver -p KIE_SERVER_HOSTNAME_HTTP="${APP_NAME}-${DEV_NAMESPACE}.${CLUSTER}" -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks -p KIE_ADMIN_USER=rhpamadmin -p KIE_ADMIN_PWD=rhpamadmin760 -p KIE_SERVER_USER=executionUser -p KIE_SERVER_PWD=executionUser123 -p KIE_SERVER_CONTROLLER_USER=controllerUser -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 -p MAVEN_REPO_URL=${NEXUS_ROUTE_URL}/maven-public -p MAVEN_REPO_USERNAME=admin -p MAVEN_REPO_PASSWORD=admin123 -p MAVEN_REPO_ID=maven-public  -l app=${APP_NAME}-pamdev -n ${DEV_NAMESPACE}
+oc new-app --template=rhpam76-authoring-managed -p BUSINESS_CENTRAL_HTTPS_SECRET=businesscentral-app-secret  \
+           -p KIE_SERVER_HTTPS_SECRET=kieserver-app-secret -p APPLICATION_NAME=${APP_NAME} -p BUSINESS_CENTRAL_HTTPS_NAME=businesscentral \
+           -p BUSINESS_CENTRAL_HTTPS_PASSWORD=mykeystorepass -p BUSINESS_CENTRAL_HTTPS_KEYSTORE=bckeystore.jks -p KIE_SERVER_HTTPS_NAME=kieserver \
+           -p KIE_SERVER_HOSTNAME_HTTP="${APP_NAME}-${DEV_NAMESPACE}.${CLUSTER}" -p KIE_SERVER_HTTPS_PASSWORD=mykeystorepass  \
+           -p KIE_SERVER_HTTPS_KEYSTORE=kiekeystore.jks -p KIE_ADMIN_USER=rhpamadmin -p KIE_ADMIN_PWD=rhpamadmin760 -p KIE_SERVER_USER=executionUser \
+           -p KIE_SERVER_PWD=executionUser123 -p KIE_SERVER_CONTROLLER_USER=controllerUser -p KIE_SERVER_CONTROLLER_PWD=controllerUser123 \
+           -p MAVEN_REPO_URL=${NEXUS_ROUTE_URL}/maven-public -p MAVEN_REPO_USERNAME=admin -p MAVEN_REPO_PASSWORD=admin123 -p MAVEN_REPO_ID=maven-public  \
+           -l app=pam-${APP_NAME}-dev -n ${DEV_NAMESPACE}
 
 echo ""
 echo ""
