@@ -10,9 +10,7 @@ Directions:
 * https://access.redhat.com/RegistryAuthentication[Red Hat Container Registry Authentication] (Using config.json)
 * https://access.redhat.com/solutions/3812291[How do I use an imagestreamsecret with redhat.registry.io] (Using credentials rather than json works just fine)
 
-	$ oc create secret generic imagestreamsecret --from-file=.dockerconfigjson=/home/stkousso/Stelios/sw11/PAAS/Distros/minishift/1.27/minishift-1.27.0-linux-amd64/config.json --type=kubernetes.io/dockerconfigjson
-
-        $ oc create secret generic imagestreamsecret --from-file=.dockerconfigjson=/home/stkousso/.docker/config.json --type=kubernetes.io/dockerconfigjson
+    $ oc create secret generic imagestreamsecret --from-file=.dockerconfigjson=/home/stkousso/.docker/config.json --type=kubernetes.io/dockerconfigjson
 
 === RHSSO
 
@@ -525,8 +523,8 @@ image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Sing
 * Initiate Installations
 
 	oc new-project pam-prod-mariadb
-	oc create -f Infrastructure/templates/rhpam73-prod-EXTERNAL-mariadb-stelios-1.yaml
-	./Infrastructure/scripts73/setup_PROD_mariadb_managed.sh pam-prod-mariadb tools <APP_NAME> <MARIADB_HOST_NAME> <MARIADB_DB_NAME> <MARIADB_DB_USER> <MARIADB_DB_PWD>  <ENV [QA,SIT,UAT,PRE-PROD,PROD]>
+	oc create -f Infrastructure/templates76/rhpam76-prod-EXTERNAL-mariadb-stelios-1.yaml
+	./Infrastructure/scripts76/setup_PROD_mariadb_managed.sh pam-prod-mariadb tools <APP_NAME> <MARIADB_HOST_NAME> <MARIADB_DB_NAME> <MARIADB_DB_USER> <MARIADB_DB_PWD>  <ENV [QA,SIT,UAT,PRE-PROD,PROD]>
 
 ==== Installing PROD with external Oracle (to be done on-site)
 
@@ -540,7 +538,7 @@ image:pics/RH-PAM-Flow-NoCICD-ExternalDB.png[alt="Non-CICD RHPAM Setup with Sing
 ** *Pre-Requisite-2*: A Database with the following settings to have been created
 
 	$ oc new-project pam-prod-oracle
-	$ oc create -f Infrastructure/templates/rhpam73-prod-EXTERNAL-oracle-stelios-1.yaml
+	$ oc create -f Infrastructure/templates76/rhpam76-prod-EXTERNAL-oracle-stelios-1.yaml
 	./Infrastructure/scripts73/setup_PROD_oracle_managed.sh pam-prod-oracle tools <APP_NAME> <ORACLE_HOST_NAME> <ORACLE_DB_NAME> <ORACLE_DB_USER> <ORACLE_DB_PWD> <ENV [QA,SIT,UAT,PRE-PROD,PROD]>
 
 === Setting & Utilizing Openshift Autoscaler
